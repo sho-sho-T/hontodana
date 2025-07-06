@@ -6,33 +6,33 @@
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {},
 		"ghcr.io/devcontainers/features/node:1": {}
-	  },
-	  "customizations": {
+	},
+	"customizations": {
 		"vscode": {
-		  "extensions": ["prisma.prisma", "biomejs.biome"],
-		  "settings": {
-			"editor.defaultFormatter": "biomejs.biome",
-			"editor.formatOnSave": true,
-			"[typescript]": {
-			  "editor.defaultFormatter": "biomejs.biome"
-			},
-			"[typescriptreact]": {
-			  "editor.defaultFormatter": "biomejs.biome"
-			},
-			"[javascript]": {
-			  "editor.defaultFormatter": "biomejs.biome"
-			},
-			"[javascriptreact]": {
-			  "editor.defaultFormatter": "biomejs.biome"
-			},
-			"[json]": {
-			  "editor.defaultFormatter": "biomejs.biome"
-			},
-			"editor.codeActionsOnSave": {
-			  "quickfix.biome": "explicit",
-			  "source.organizeImports.biome": "explicit"
+			"extensions": ["prisma.prisma", "biomejs.biome"],
+			"settings": {
+				"editor.defaultFormatter": "biomejs.biome",
+				"editor.formatOnSave": true,
+				"[typescript]": {
+					"editor.defaultFormatter": "biomejs.biome"
+				},
+				"[typescriptreact]": {
+					"editor.defaultFormatter": "biomejs.biome"
+				},
+				"[javascript]": {
+					"editor.defaultFormatter": "biomejs.biome"
+				},
+				"[javascriptreact]": {
+					"editor.defaultFormatter": "biomejs.biome"
+				},
+				"[json]": {
+					"editor.defaultFormatter": "biomejs.biome"
+				},
+				"editor.codeActionsOnSave": {
+					"quickfix.biome": "explicit",
+					"source.organizeImports.biome": "explicit"
+				}
 			}
-		  }
 		}
-	  }
+	}
 }
