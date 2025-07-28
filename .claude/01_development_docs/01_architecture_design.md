@@ -15,7 +15,7 @@
 
 ### 2.1 ディレクトリ構成
 ```
-src/
+/
 ├── app/                          # Next.js App Router
 │   ├── (auth)/                   # 認証関連ページ
 │   ├── dashboard/                # ダッシュボード
