@@ -6,7 +6,22 @@
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+
+		"db:migrate": "prisma migrate dev",
+		"db:migrate:init": "prisma migrate dev --name init",
+		"db:migrate:reset": "prisma migrate reset",
+		"db:migrate:deploy": "prisma migrate deploy",
+		"db:migrate:status": "prisma migrate status",
+		
+		"db:generate": "prisma generate",
+		"db:studio": "prisma studio",
+		"db:push": "prisma db push",
+		"db:pull": "prisma db pull",
+		"db:seed": "tsx prisma/seed.ts",
+		
+		"db:reset": "prisma migrate reset --force && npm run db:seed",
+		"db:setup": "npm run db:migrate:init && npm run db:generate && npm run db:seed"
 	},
 	"dependencies": {
 		"@anthropic-ai/claude-code": "^1.0.43",
