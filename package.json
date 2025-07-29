@@ -8,19 +8,19 @@
 		"start": "next start",
 		"lint": "next lint",
 
-		"db:migrate": "prisma migrate dev",
-		"db:migrate:init": "prisma migrate dev --name init",
-		"db:migrate:reset": "prisma migrate reset",
-		"db:migrate:deploy": "prisma migrate deploy",
-		"db:migrate:status": "prisma migrate status",
+		"db:migrate": "npx prisma migrate dev",
+		"db:migrate:init": "npx prisma migrate dev --name init",
+		"db:migrate:reset": "npx prisma migrate reset",
+		"db:migrate:deploy": "npx prisma migrate deploy",
+		"db:migrate:status": "npx prisma migrate status",
 		
-		"db:generate": "prisma generate",
-		"db:studio": "prisma studio",
-		"db:push": "prisma db push",
-		"db:pull": "prisma db pull",
+		"db:generate": "npx prisma generate",
+		"db:studio": "npx prisma studio",
+		"db:push": "npx prisma db push",
+		"db:pull": "npx prisma db pull",
 		"db:seed": "tsx prisma/seed.ts",
 		
-		"db:reset": "prisma migrate reset --force && npm run db:seed",
+		"db:reset": "npx prisma migrate reset --force && npm run db:seed",
 		"db:setup": "npm run db:migrate:init && npm run db:generate && npm run db:seed"
 	},
 	"dependencies": {
