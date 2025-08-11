@@ -13,7 +13,12 @@
       "mcp__serena__search_for_pattern",
       "mcp__serena__write_memory",
       "mcp__serena__check_onboarding_performed",
-      "mcp__serena__read_memory"
+      "mcp__serena__read_memory",
+      "Bash(pgrep:*)",
+      "Bash(npx supabase migration:*)",
+      "Bash(npx supabase:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   },
