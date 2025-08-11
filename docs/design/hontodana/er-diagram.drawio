@@ -1,0 +1,198 @@
+<mxfile host="app.diagrams.net" modified="2025-08-11T22:30:00.000Z" agent="5.0" etag="xyz123" version="24.6.4" type="device">
+  <diagram name="Hontodana ER Diagram" id="abc123">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- UserProfile Entity -->
+        <mxCell id="userProfile" value="UserProfile" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="userProfileAttr" value="id (PK, UUID)&#xa;name (String)&#xa;avatar_url (String?)&#xa;theme (String)&#xa;display_mode (String)&#xa;books_per_page (Int)&#xa;default_book_type (Enum)&#xa;reading_goal (Int?)&#xa;created_at (DateTime)&#xa;updated_at (DateTime)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="200" height="160" as="geometry" />
+        </mxCell>
+        
+        <!-- Book Entity -->
+        <mxCell id="book" value="Book" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="500" y="40" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="bookAttr" value="id (PK, UUID)&#xa;google_books_id (String?)&#xa;title (String)&#xa;authors (String[])&#xa;publisher (String?)&#xa;published_date (String?)&#xa;isbn_10 (String?)&#xa;isbn_13 (String?)&#xa;page_count (Int?)&#xa;language (String)&#xa;description (String?)&#xa;thumbnail_url (String?)&#xa;preview_link (String?)&#xa;info_link (String?)&#xa;categories (String[])&#xa;average_rating (Decimal?)&#xa;ratings_count (Int)&#xa;created_at (DateTime)&#xa;updated_at (DateTime)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="500" y="80" width="200" height="300" as="geometry" />
+        </mxCell>
+        
+        <!-- UserBook Entity -->
+        <mxCell id="userBook" value="UserBook" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="290" y="280" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="userBookAttr" value="id (PK, UUID)&#xa;user_id (FK, UUID)&#xa;book_id (FK, UUID)&#xa;book_type (Enum)&#xa;status (Enum)&#xa;current_page (Int)&#xa;start_date (Date?)&#xa;finish_date (Date?)&#xa;rating (Int?)&#xa;review (String?)&#xa;notes (String[])&#xa;tags (String[])&#xa;is_favorite (Boolean)&#xa;acquired_date (Date?)&#xa;location (String?)&#xa;created_at (DateTime)&#xa;updated_at (DateTime)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="250" y="320" width="200" height="260" as="geometry" />
+        </mxCell>
+        
+        <!-- ReadingSession Entity -->
+        <mxCell id="readingSession" value="ReadingSession" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="readingSessionAttr" value="id (PK, UUID)&#xa;user_book_id (FK, UUID)&#xa;start_page (Int)&#xa;end_page (Int)&#xa;pages_read (Int)&#xa;session_date (Date)&#xa;duration_minutes (Int?)&#xa;notes (String?)&#xa;created_at (DateTime)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="40" y="660" width="200" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- WishlistItem Entity -->
+        <mxCell id="wishlistItem" value="WishlistItem" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="760" y="280" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="wishlistItemAttr" value="id (PK, UUID)&#xa;user_id (FK, UUID)&#xa;book_id (FK, UUID)&#xa;priority (Enum)&#xa;reason (String?)&#xa;target_date (Date?)&#xa;price_alert (Decimal?)&#xa;created_at (DateTime)&#xa;updated_at (DateTime)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="760" y="320" width="200" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Collection Entity -->
+        <mxCell id="collection" value="Collection" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="520" y="620" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="collectionAttr" value="id (PK, UUID)&#xa;user_id (FK, UUID)&#xa;name (String)&#xa;description (String?)&#xa;color (String)&#xa;icon (String)&#xa;is_public (Boolean)&#xa;sort_order (Int)&#xa;created_at (DateTime)&#xa;updated_at (DateTime)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="520" y="660" width="200" height="160" as="geometry" />
+        </mxCell>
+        
+        <!-- CollectionBook Entity -->
+        <mxCell id="collectionBook" value="CollectionBook" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="280" y="620" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="collectionBookAttr" value="id (PK, UUID)&#xa;collection_id (FK, UUID)&#xa;user_book_id (FK, UUID)&#xa;sort_order (Int)&#xa;added_at (DateTime)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="280" y="660" width="200" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- Enums -->
+        <mxCell id="bookTypeEnum" value="BookType&#xa;• physical&#xa;• kindle&#xa;• epub&#xa;• audiobook&#xa;• other" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="980" y="40" width="120" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="readingStatusEnum" value="ReadingStatus&#xa;• want_to_read&#xa;• reading&#xa;• completed&#xa;• paused&#xa;• abandoned&#xa;• reference" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="980" y="160" width="120" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="wishlistPriorityEnum" value="WishlistPriority&#xa;• low&#xa;• medium&#xa;• high&#xa;• urgent" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top" vertex="1" parent="1">
+          <mxGeometry x="980" y="300" width="120" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Relationships -->
+        <!-- UserProfile -> UserBook (1:N) -->
+        <mxCell id="rel1" value="1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="userProfile" target="userBook">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="200" y="60" as="sourcePoint" />
+            <mxPoint x="290" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel1Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="290" as="sourcePoint" />
+            <mxPoint x="290" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Book -> UserBook (1:N) -->
+        <mxCell id="rel2" value="1" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="book" target="userBook">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="60" as="sourcePoint" />
+            <mxPoint x="410" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel2Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="430" y="290" as="sourcePoint" />
+            <mxPoint x="410" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- UserBook -> ReadingSession (1:N) -->
+        <mxCell id="rel3" value="1" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="userBook" target="readingSession">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="290" y="580" as="sourcePoint" />
+            <mxPoint x="160" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel3Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="180" y="640" as="sourcePoint" />
+            <mxPoint x="160" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- UserProfile -> WishlistItem (1:N) -->
+        <mxCell id="rel4" value="1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="userProfile" target="wishlistItem">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="200" y="80" as="sourcePoint" />
+            <mxPoint x="760" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel4Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="740" y="300" as="sourcePoint" />
+            <mxPoint x="760" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Book -> WishlistItem (1:N) -->
+        <mxCell id="rel5" value="1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="book" target="wishlistItem">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="620" y="80" as="sourcePoint" />
+            <mxPoint x="820" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel5Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="820" y="260" as="sourcePoint" />
+            <mxPoint x="820" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- UserProfile -> Collection (1:N) -->
+        <mxCell id="rel6" value="1" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="userProfile" target="collection">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="200" y="240" as="sourcePoint" />
+            <mxPoint x="520" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel6Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="640" as="sourcePoint" />
+            <mxPoint x="520" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Collection -> CollectionBook (1:N) -->
+        <mxCell id="rel7" value="1" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="collection" target="collectionBook">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="520" y="640" as="sourcePoint" />
+            <mxPoint x="400" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel7Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="420" y="640" as="sourcePoint" />
+            <mxPoint x="400" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- UserBook -> CollectionBook (1:N) -->
+        <mxCell id="rel8" value="1" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="userBook" target="collectionBook">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="580" as="sourcePoint" />
+            <mxPoint x="320" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel8Label" value="N" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="600" as="sourcePoint" />
+            <mxPoint x="320" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Title -->
+        <mxCell id="title" value="Hontodana Database ER Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="400" y="10" width="300" height="20" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
