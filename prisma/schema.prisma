@@ -14,15 +14,167 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String   @id @db.Uuid
-  email       String   @unique
-  username    String   @unique
-  displayName String?  @map("display_name")
-  bio         String?
-  
+enum BookType {
+  physical
+  kindle
+  epub
+  audiobook
+  other
+}
+
+enum ReadingStatus {
+  want_to_read
+  reading
+  completed
+  paused
+  abandoned
+  reference
+}
+
+enum WishlistPriority {
+  low
+  medium
+  high
+  urgent
+}
+
+model UserProfile {
+  id               String    @id @db.Uuid
+  name             String
+  avatarUrl        String?   @map("avatar_url")
+  theme            String    @default("system") // 'light', 'dark', 'system'
+  displayMode      String    @default("grid")   @map("display_mode") // 'grid', 'list'
+  booksPerPage     Int       @default(20)       @map("books_per_page")
+  defaultBookType  BookType  @default(physical) @map("default_book_type")
+  readingGoal      Int?      @map("reading_goal")
+  createdAt        DateTime  @default(now())    @map("created_at")
+  updatedAt        DateTime  @updatedAt         @map("updated_at")
+
+  userBooks        UserBook[]
+  wishlistItems    WishlistItem[]
+  collections      Collection[]
+
+  @@map("user_profiles")
+}
+
+model Book {
+  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  googleBooksId String?  @unique @map("google_books_id")
+  title         String
+  authors       String[] @default([])
+  publisher     String?
+  publishedDate String?  @map("published_date")
+  isbn10        String?  @map("isbn_10")
+  isbn13        String?  @map("isbn_13")
+  pageCount     Int?     @map("page_count")
+  language      String   @default("ja")
+  description   String?
+  thumbnailUrl  String?  @map("thumbnail_url")
+  previewLink   String?  @map("preview_link")
+  infoLink      String?  @map("info_link")
+  categories    String[] @default([])
+  averageRating Decimal? @map("average_rating") @db.Decimal(2, 1)
+  ratingsCount  Int      @default(0) @map("ratings_count")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  userBooks     UserBook[]
+  wishlistItems WishlistItem[]
+
+  @@map("books")
+}
+
+model UserBook {
+  id           String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId       String        @map("user_id") @db.Uuid
+  bookId       String        @map("book_id") @db.Uuid
+  bookType     BookType      @default(physical) @map("book_type")
+  status       ReadingStatus @default(want_to_read)
+  currentPage  Int           @default(0) @map("current_page")
+  startDate    DateTime?     @map("start_date") @db.Date
+  finishDate   DateTime?     @map("finish_date") @db.Date
+  rating       Int?
+  review       String?
+  notes        String[]      @default([])
+  tags         String[]      @default([])
+  isFavorite   Boolean       @default(false) @map("is_favorite")
+  acquiredDate DateTime?     @map("acquired_date") @db.Date
+  location     String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  userProfile      UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book             Book             @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  readingSessions  ReadingSession[]
+  collectionBooks  CollectionBook[]
+
+  @@unique([userId, bookId, bookType])
+  @@map("user_books")
+}
+
+model ReadingSession {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userBookId      String   @map("user_book_id") @db.Uuid
+  startPage       Int      @map("start_page")
+  endPage         Int      @map("end_page")
+  pagesRead       Int      @map("pages_read") // Generated column
+  sessionDate     DateTime @default(dbgenerated("CURRENT_DATE")) @map("session_date") @db.Date
+  durationMinutes Int?     @map("duration_minutes")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  userBook UserBook @relation(fields: [userBookId], references: [id], onDelete: Cascade)
+
+  @@map("reading_sessions")
+}
+
+model WishlistItem {
+  id         String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId     String            @map("user_id") @db.Uuid
+  bookId     String            @map("book_id") @db.Uuid
+  priority   WishlistPriority  @default(medium)
+  reason     String?
+  targetDate DateTime?         @map("target_date") @db.Date
+  priceAlert Decimal?          @map("price_alert") @db.Decimal(10, 2)
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime          @updatedAt @map("updated_at")
+
+  userProfile UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book        Book        @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@map("wishlist_items")
+}
+
+model Collection {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  name        String
+  description String?
+  color       String   @default("#3B82F6")
+  icon        String   @default("📚")
+  isPublic    Boolean  @default(false) @map("is_public")
+  sortOrder   Int      @default(0) @map("sort_order")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@map("users")
+  userProfile     UserProfile      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collectionBooks CollectionBook[]
+
+  @@unique([userId, name])
+  @@map("collections")
+}
+
+model CollectionBook {
+  id           String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  collectionId String   @map("collection_id") @db.Uuid
+  userBookId   String   @map("user_book_id") @db.Uuid
+  sortOrder    Int      @default(0) @map("sort_order")
+  addedAt      DateTime @default(now()) @map("added_at")
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  userBook   UserBook   @relation(fields: [userBookId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, userBookId])
+  @@map("collection_books")
 }
