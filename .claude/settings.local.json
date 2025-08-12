@@ -23,7 +23,9 @@
       "Bash(npx prisma db execute:*)",
       "Bash(node:*)",
       "Bash(git add:*)",
-      "Bash(npx prisma migrate:*)"
+      "Bash(npx prisma migrate:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm test)"
     ],
     "deny": []
   },
