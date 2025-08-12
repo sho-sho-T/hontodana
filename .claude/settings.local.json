@@ -18,7 +18,12 @@
       "Bash(npx supabase migration:*)",
       "Bash(npx supabase:*)",
       "Bash(grep:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(supabase:*)",
+      "Bash(npx prisma db execute:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(npx prisma migrate:*)"
     ],
     "deny": []
   },
