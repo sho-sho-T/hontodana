@@ -10,6 +10,8 @@
         "start-mcp-server",
         "--context",
         "ide-assistant",
+        "--enable-web-dashboard",
+        "false",
         "--project",
         "/Users/matsubara-shoto/Projects/hontodana"
       ],
