@@ -1,4 +1,4 @@
-import { SearchParams, SearchResponse, GoogleBooksResponse } from './types'
+import type { SearchParams, SearchResponse, GoogleBooksResponse } from './types'
 import { normalizeGoogleBooksResponse } from './normalize'
 import { retryWithBackoff } from './retry'
 import { GoogleBooksError, RateLimitError, NetworkError } from './errors'

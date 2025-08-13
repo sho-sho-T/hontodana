@@ -1,4 +1,4 @@
-import { SearchParams } from './types'
+import type { SearchParams } from './types'
 import { ValidationError } from './errors'
 import { GOOGLE_BOOKS_CONFIG } from './config'
 
@@ -20,9 +20,9 @@ function validateMaxResults(maxResultsStr?: string): number {
     return GOOGLE_BOOKS_CONFIG.DEFAULT_MAX_RESULTS
   }
   
-  const parsed = parseInt(maxResultsStr, 10)
+  const parsed = Number.parseInt(maxResultsStr, 10)
   
-  if (isNaN(parsed) || parsed < 1) {
+  if (Number.isNaN(parsed) || parsed < 1) {
     throw new ValidationError('正の値を指定してください')
   }
   
@@ -41,9 +41,9 @@ function validateStartIndex(startIndexStr?: string): number {
     return GOOGLE_BOOKS_CONFIG.DEFAULT_START_INDEX
   }
   
-  const parsed = parseInt(startIndexStr, 10)
+  const parsed = Number.parseInt(startIndexStr, 10)
   
-  if (isNaN(parsed) || parsed < 0) {
+  if (Number.isNaN(parsed) || parsed < 0) {
     throw new ValidationError('正の値を指定してください')
   }
   

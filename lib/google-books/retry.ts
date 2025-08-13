@@ -22,7 +22,7 @@ export async function retryWithBackoff<T>(
   maxRetries: number = GOOGLE_BOOKS_CONFIG.MAX_RETRIES,
   baseDelay: number = GOOGLE_BOOKS_CONFIG.RETRY_BASE_DELAY
 ): Promise<T> {
-  let lastError: Error
+  let lastError: Error | undefined
   
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -41,7 +41,7 @@ export async function retryWithBackoff<T>(
       }
       
       // 指数バックオフで待機（ジッター付き）
-      const delay = baseDelay * Math.pow(2, attempt)
+      const delay = baseDelay * 2 ** attempt
       const jitter = Math.random() * 0.1 * delay // 10%のジッター
       const actualDelay = delay + jitter
       
@@ -51,9 +51,9 @@ export async function retryWithBackoff<T>(
   }
   
   // 最後の試行でも失敗した場合
-  if (lastError.message.includes('429')) {
+  if (lastError && lastError.message.includes('429')) {
     throw new RateLimitError('Google Books APIのレート制限に達しました。しばらく待ってから再試行してください。')
   }
   
-  throw new NetworkError(`Google Books APIへの接続に失敗しました: ${lastError.message}`)
+  throw new NetworkError(`Google Books APIへの接続に失敗しました: ${lastError?.message || 'Unknown error'}`)
 }

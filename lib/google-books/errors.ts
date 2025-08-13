@@ -2,7 +2,7 @@
 export class GoogleBooksError extends Error {
   constructor(
     message: string,
-    public statusCode: number = 500,
+    public statusCode = 500,
     public originalError?: Error
   ) {
     super(message)
@@ -18,14 +18,14 @@ export class ValidationError extends Error {
 }
 
 export class RateLimitError extends Error {
-  constructor(message: string = 'レート制限に達しました') {
+  constructor(message = 'レート制限に達しました') {
     super(message)
     this.name = 'RateLimitError'
   }
 }
 
 export class NetworkError extends Error {
-  constructor(message: string = 'ネットワークエラーが発生しました') {
+  constructor(message = 'ネットワークエラーが発生しました') {
     super(message)
     this.name = 'NetworkError'
   }
