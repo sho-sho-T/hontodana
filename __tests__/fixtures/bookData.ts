@@ -112,3 +112,69 @@ export const createMockBook = (overrides?: Partial<UserBookWithBook>): UserBookW
  * 空の書籍リスト
  */
 export const emptyBooks: UserBookWithBook[] = []
+
+/**
+ * テスト用のデータベース操作ヘルパー関数
+ */
+import { prisma } from '@/lib/generated/prisma'
+
+export const createTestUser = async (overrides = {}) => {
+  return await prisma.userProfile.create({
+    data: {
+      id: 'test-user-id',
+      name: 'テストユーザー',
+      ...overrides
+    }
+  })
+}
+
+export const createTestBook = async (overrides = {}) => {
+  return await prisma.book.create({
+    data: {
+      title: 'テスト書籍',
+      authors: ['テスト著者'],
+      pageCount: 300,
+      ...overrides
+    }
+  })
+}
+
+export const createTestUserBook = async (overrides = {}) => {
+  let book
+  if (overrides.book) {
+    book = await createTestBook(overrides.book)
+    delete overrides.book
+  } else {
+    book = await createTestBook()
+  }
+  
+  return await prisma.userBook.create({
+    data: {
+      userId: 'test-user-id',
+      bookId: book.id,
+      status: 'want_to_read',
+      currentPage: 0,
+      ...overrides
+    },
+    include: {
+      book: true
+    }
+  })
+}
+
+export const createTestReadingSession = async (overrides = {}) => {
+  const sessionDate = overrides.sessionDate || new Date()
+  const pagesRead = (overrides.endPage || 20) - (overrides.startPage || 1) + 1
+  
+  return await prisma.readingSession.create({
+    data: {
+      userBookId: 'test-user-book-id',
+      startPage: 1,
+      endPage: 20,
+      pagesRead,
+      sessionDate,
+      durationMinutes: 30,
+      ...overrides
+    }
+  })
+}
