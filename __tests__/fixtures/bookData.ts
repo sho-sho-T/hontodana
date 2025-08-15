@@ -178,3 +178,25 @@ export const createTestReadingSession = async (overrides = {}) => {
     }
   })
 }
+
+export const createTestWishlistItem = async (overrides = {}) => {
+  let book
+  if (overrides.book) {
+    book = await createTestBook(overrides.book)
+    delete overrides.book
+  } else {
+    book = await createTestBook()
+  }
+  
+  return await prisma.wishlistItem.create({
+    data: {
+      userId: 'test-user-id',
+      bookId: book.id,
+      priority: 'medium',
+      ...overrides
+    },
+    include: {
+      book: true
+    }
+  })
+}
