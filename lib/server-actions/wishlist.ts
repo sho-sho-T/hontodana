@@ -6,7 +6,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { validateWishlistInput, isValidPriority } from '@/lib/utils/wishlist-utils'
 import { AuthenticationError, ValidationError as BookValidationError, DuplicateError, errorToResponse } from '@/lib/errors/book-errors'
 import type {
@@ -118,7 +118,11 @@ export async function addToWishlist(
     }
 
   } catch (error) {
-    return errorToResponse(error)
+    const errorResponse = errorToResponse(error)
+    return {
+      success: false,
+      error: errorResponse.error
+    }
   }
 }
 
@@ -181,7 +185,11 @@ export async function updateWishlistPriority(
     }
 
   } catch (error) {
-    return errorToResponse(error)
+    const errorResponse = errorToResponse(error)
+    return {
+      success: false,
+      error: errorResponse.error
+    }
   }
 }
 
@@ -217,7 +225,11 @@ export async function removeFromWishlist(
     }
 
   } catch (error) {
-    return errorToResponse(error)
+    const errorResponse = errorToResponse(error)
+    return {
+      success: false,
+      error: errorResponse.error
+    }
   }
 }
 
@@ -255,8 +267,8 @@ export async function moveToLibrary(
         data: {
           userId,
           bookId: wishlistItem.bookId,
-          bookType: input.bookType || 'physical',
-          status: input.status || 'want_to_read'
+          bookType: input.bookType || 'physical' as const,
+          status: input.status || 'want_to_read' as const
         },
         include: {
           book: true
@@ -280,7 +292,11 @@ export async function moveToLibrary(
     }
 
   } catch (error) {
-    return errorToResponse(error)
+    const errorResponse = errorToResponse(error)
+    return {
+      success: false,
+      error: errorResponse.error
+    }
   }
 }
 
@@ -373,6 +389,10 @@ export async function getUserWishlist(
     }
 
   } catch (error) {
-    return errorToResponse(error)
+    const errorResponse = errorToResponse(error)
+    return {
+      success: false,
+      error: errorResponse.error
+    }
   }
 }

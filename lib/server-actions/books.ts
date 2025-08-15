@@ -6,7 +6,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { normalizeBookData } from '@/lib/utils/book-normalizer'
 import { validateNormalizedBookData, validateUserId, isValidBookStatus, isValidBookType } from '@/lib/validation/book-validation'
 import { BookStatus, BookType } from '@/lib/models/book'

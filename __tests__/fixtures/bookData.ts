@@ -33,7 +33,7 @@ export const mockUserBook: UserBookWithBook = {
   bookId: 'book-1',
   status: BookStatus.READING,
   bookType: BookType.PHYSICAL,
-  progress: 150,
+  currentPage: 150,
   startDate: new Date('2024-01-01'),
   finishDate: null,
   rating: null,
@@ -52,7 +52,7 @@ export const mockBooks: UserBookWithBook[] = [
     bookId: 'book-2',
     status: BookStatus.WANT_TO_READ,
     bookType: BookType.KINDLE,
-    progress: 0,
+    currentPage: 0,
     startDate: null,
     finishDate: null,
     rating: null,
@@ -75,7 +75,7 @@ export const mockBooks: UserBookWithBook[] = [
     bookId: 'book-3',
     status: BookStatus.READ,
     bookType: BookType.EPUB,
-    progress: 250,
+    currentPage: 250,
     startDate: new Date('2023-12-01'),
     finishDate: new Date('2023-12-25'),
     rating: 5,
@@ -116,7 +116,7 @@ export const emptyBooks: UserBookWithBook[] = []
 /**
  * テスト用のデータベース操作ヘルパー関数
  */
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 
 export const createTestUser = async (overrides = {}) => {
   return await prisma.userProfile.create({

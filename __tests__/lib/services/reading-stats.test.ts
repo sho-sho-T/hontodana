@@ -3,7 +3,7 @@
  */
 
 import { generateReadingStats } from '@/lib/services/reading-stats'
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { createTestUserBook, createTestReadingSession } from '@/__tests__/fixtures/bookData'
 
 describe('generateReadingStats', () => {

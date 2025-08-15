@@ -3,7 +3,7 @@
  */
 
 import { updateReadingProgress } from '@/lib/server-actions/reading-progress'
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { createTestUserBook, createTestUser, createTestBook } from '@/__tests__/fixtures/bookData'
 
 // モック設定

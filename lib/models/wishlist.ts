@@ -2,6 +2,8 @@
  * ウィッシュリスト機能に関する型定義
  */
 
+import type { Decimal } from '@prisma/client/runtime/library'
+
 export type WishlistPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 export interface WishlistItemData {
@@ -11,7 +13,7 @@ export interface WishlistItemData {
   priority: WishlistPriority
   reason: string | null
   targetDate: Date | null
-  priceAlert: number | null
+  priceAlert: Decimal | null
   createdAt: Date
   updatedAt: Date
 }
@@ -48,8 +50,8 @@ export interface RemoveFromWishlistInput {
 
 export interface MoveToLibraryInput {
   wishlistItemId: string
-  bookType?: string
-  status?: string
+  bookType?: import('@/lib/models/book').BookType
+  status?: import('@/lib/models/book').BookStatus
 }
 
 export interface GetWishlistInput {

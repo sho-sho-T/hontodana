@@ -6,7 +6,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { calculateProgressPercentage, validateProgressInput } from '@/lib/utils/reading-progress'
 import { AuthenticationError, ValidationError as BookValidationError, DatabaseError, errorToResponse } from '@/lib/errors/book-errors'
 import type { UpdateProgressInput, UpdateProgressResult } from '@/lib/models/reading-progress'
@@ -138,6 +138,10 @@ export async function updateReadingProgress(
     }
 
   } catch (error) {
-    return errorToResponse(error)
+    const errorResponse = errorToResponse(error)
+    return {
+      success: false,
+      error: errorResponse.error
+    }
   }
 }

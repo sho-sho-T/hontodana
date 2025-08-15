@@ -30,7 +30,7 @@ export function BookCard({ book, viewMode, onStatusChange, onRemove }: BookCardP
   }
 
   const thumbnailSrc = book.book.thumbnailUrl || '/images/book-placeholder.png'
-  const progressPercentage = book.book.pageCount ? (book.progress / book.book.pageCount) * 100 : 0
+  const progressPercentage = book.book.pageCount ? (book.currentPage / book.book.pageCount) * 100 : 0
 
   return (
     <article 
@@ -79,7 +79,7 @@ export function BookCard({ book, viewMode, onStatusChange, onRemove }: BookCardP
         {/* 進捗バー（読書中の場合のみ） */}
         {book.status === BookStatus.READING && book.book.pageCount && (
           <ProgressBar
-            current={book.progress}
+            current={book.currentPage}
             total={book.book.pageCount}
             label="読書進捗"
           />

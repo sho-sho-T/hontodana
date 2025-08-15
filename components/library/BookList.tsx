@@ -164,7 +164,7 @@ export function BookList({
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
                     <button
-                      onClick={() => onStatusChange(book.id, BookStatus.read)}
+                      onClick={() => onStatusChange(book.id, BookStatus.READ)}
                       className="text-xs px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                       aria-label={`${book.book.title} のステータスを変更`}
                     >

@@ -9,7 +9,7 @@ import {
   moveToLibrary,
   getUserWishlist
 } from '@/lib/server-actions/wishlist'
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import { createTestBook, createTestUser, createTestUserBook, createTestWishlistItem } from '@/__tests__/fixtures/bookData'
 
 // モック設定

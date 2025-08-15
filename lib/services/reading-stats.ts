@@ -2,7 +2,7 @@
  * 読書統計サービス
  */
 
-import { prisma } from '@/lib/generated/prisma'
+import { prisma } from '@/lib/prisma'
 import type { ReadingStats, ReadingStatsOptions, DailyStats, WeeklyStats } from '@/lib/models/reading-progress'
 
 /**

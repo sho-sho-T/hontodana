@@ -2,23 +2,30 @@
  * 書籍データモデルの型定義
  */
 
-// Prismaのデータベーススキーマに合わせた型定義
-export enum BookStatus {
-  WANT_TO_READ = 'want_to_read',
-  READING = 'reading',
-  READ = 'completed', // Prismaスキーマでは 'completed'
-  PAUSED = 'paused',
-  ABANDONED = 'abandoned',
-  REFERENCE = 'reference'
-}
+// Prismaから生成された型を再エクスポート
+import type { BookType as PrismaBookType, ReadingStatus as PrismaReadingStatus } from '@/lib/generated/prisma'
+import type { Decimal } from '@prisma/client/runtime/library'
 
-export enum BookType {
-  PHYSICAL = 'physical',
-  KINDLE = 'kindle', 
-  EPUB = 'epub',
-  AUDIOBOOK = 'audiobook',
-  OTHER = 'other'
-}
+export type BookStatus = PrismaReadingStatus
+export type BookType = PrismaBookType
+
+// 便利な定数として古いenumも維持（後方互換性）
+export const BookStatus = {
+  WANT_TO_READ: 'want_to_read' as PrismaReadingStatus,
+  READING: 'reading' as PrismaReadingStatus,
+  READ: 'completed' as PrismaReadingStatus, // Prismaスキーマでは 'completed'
+  PAUSED: 'paused' as PrismaReadingStatus,
+  ABANDONED: 'abandoned' as PrismaReadingStatus,
+  REFERENCE: 'reference' as PrismaReadingStatus
+} as const
+
+export const BookType = {
+  PHYSICAL: 'physical' as PrismaBookType,
+  KINDLE: 'kindle' as PrismaBookType, 
+  EPUB: 'epub' as PrismaBookType,
+  AUDIOBOOK: 'audiobook' as PrismaBookType,
+  OTHER: 'other' as PrismaBookType
+} as const
 
 // Google Books APIレスポンス型（部分的）
 export interface GoogleBooksApiResponse {
@@ -134,31 +141,35 @@ export interface UserBookWithBook {
   bookId: string
   bookType: BookType
   status: BookStatus
-  progress: number // currentPage から progress に変更してテストと一致させる
+  currentPage: number // Prismaスキーマのフィールド名に合わせる
   startDate?: Date | null
   finishDate?: Date | null
   rating?: number | null
   review?: string | null
-  notes?: string | null
+  notes: string[]
+  tags: string[]
+  isFavorite: boolean
+  acquiredDate?: Date | null
+  location?: string | null
   createdAt: Date
   updatedAt: Date
   book: {
     id: string
-    googleBooksId: string
+    googleBooksId: string | null
     title: string
     authors: string[]
-    publisher?: string
-    publishedDate?: string
-    isbn10?: string
-    isbn13?: string
-    pageCount?: number
+    publisher?: string | null
+    publishedDate?: string | null
+    isbn10?: string | null
+    isbn13?: string | null
+    pageCount?: number | null
     language: string
-    description?: string
+    description?: string | null
     thumbnailUrl?: string | null
-    previewLink?: string
-    infoLink?: string
+    previewLink?: string | null
+    infoLink?: string | null
     categories: string[]
-    averageRating?: number
+    averageRating?: Decimal | null
     ratingsCount: number
     createdAt: Date
     updatedAt: Date
