@@ -30,7 +30,9 @@
       "Bash(npx biome lint:*)",
       "Bash(npm run lint)",
       "Bash(npm run format:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npm test:*)",
+      "mcp__serena__replace_regex"
     ],
     "deny": []
   },
