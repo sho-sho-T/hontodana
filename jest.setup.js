@@ -46,6 +46,17 @@ global.Request = jest.fn()
 global.Response = jest.fn()
 global.Headers = jest.fn()
 
+// Add Node.js polyfills for Next.js
+import { TextEncoder, TextDecoder } from 'util'
+global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder
+
 // Setup environment variables
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://127.0.0.1:54321'
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key'
+
+// Mock next/cache
+jest.mock('next/cache', () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
+}))
