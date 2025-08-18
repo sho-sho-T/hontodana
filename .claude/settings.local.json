@@ -32,7 +32,10 @@
       "Bash(npm run format:*)",
       "Bash(npm run lint:*)",
       "Bash(npm test:*)",
-      "mcp__serena__replace_regex"
+      "mcp__serena__replace_regex",
+      "Bash(npx tsc:*)",
+      "mcp__serena__find_referencing_symbols",
+      "mcp__serena__find_symbol"
     ],
     "deny": []
   },
