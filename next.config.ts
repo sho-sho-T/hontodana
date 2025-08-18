@@ -17,6 +17,18 @@ const nextConfig: NextConfig = {
 				port: "",
 				pathname: "/books/**", // Google Books APIの書影URL
 			},
+			{
+				protocol: "https",
+				hostname: "example.com",
+				port: "",
+				pathname: "/**", // テスト用の画像URL
+			},
+			{
+				protocol: "https",
+				hostname: "via.placeholder.com",
+				port: "",
+				pathname: "/**", // プレースホルダー画像URL
+			},
 		],
 	},
 	
