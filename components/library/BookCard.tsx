@@ -1,8 +1,10 @@
+'use client'
+
 /**
  * 書籍カードコンポーネント（グリッド表示用）
  */
 
-import React from 'react'
+import type React from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { BookStatus } from '@/lib/models/book'
@@ -10,7 +12,7 @@ import type { BookCardProps } from '@/lib/models/book'
 import { ProgressBar } from './ProgressBar'
 import { getStatusLabel, getStatusColor } from '@/lib/utils/book-ui-helpers'
 
-export function BookCard({ book, viewMode, onStatusChange, onRemove }: BookCardProps) {
+export function BookCard({ book, onStatusChange, onRemove }: BookCardProps) {
   const router = useRouter()
 
   const handleCardClick = () => {
@@ -30,13 +32,21 @@ export function BookCard({ book, viewMode, onStatusChange, onRemove }: BookCardP
   }
 
   const thumbnailSrc = book.book.thumbnailUrl || '/images/book-placeholder.png'
-  const progressPercentage = book.book.pageCount ? (book.currentPage / book.book.pageCount) * 100 : 0
+  const _progressPercentage = book.book.pageCount ? (book.currentPage / book.book.pageCount) * 100 : 0
 
   return (
-    <article 
+    // biome-ignore lint/a11y/useSemanticElements: Card contains nested interactive elements, so div with role="button" is appropriate
+    <div 
       className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden border border-gray-200"
       onClick={handleCardClick}
-      role="article"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleCardClick()
+        }
+      }}
+      tabIndex={0}
+      role="button"
       aria-label={`${book.book.title} の詳細`}
     >
       {/* 書影 */}
@@ -88,6 +98,7 @@ export function BookCard({ book, viewMode, onStatusChange, onRemove }: BookCardP
         {/* 操作ボタン */}
         <div className="flex gap-2 pt-2">
           <button
+            type="button"
             onClick={handleStatusChange}
             className="flex-1 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
             aria-label="ステータス変更"
@@ -95,6 +106,7 @@ export function BookCard({ book, viewMode, onStatusChange, onRemove }: BookCardP
             ステータス変更
           </button>
           <button
+            type="button"
             onClick={handleRemove}
             className="px-3 py-2 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors"
             aria-label="削除"
@@ -103,6 +115,6 @@ export function BookCard({ book, viewMode, onStatusChange, onRemove }: BookCardP
           </button>
         </div>
       </div>
-    </article>
+    </div>
   )
 }

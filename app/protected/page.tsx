@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-
 import { LogoutButton } from "@/components/logout-button";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,11 +11,18 @@ export default async function ProtectedPage() {
 	}
 
 	return (
-		<div className="flex h-svh w-full items-center justify-center gap-2">
-			<p>
-				Hello <span>{data.user.email}</span>
-			</p>
-			<LogoutButton />
+		<div className="min-h-screen bg-gray-50 p-8">
+			<div className="max-w-7xl mx-auto">
+				<div className="flex justify-between items-center">
+					<div>
+						<h1 className="text-3xl font-bold text-gray-900">本棚</h1>
+						<p className="text-gray-600 mt-2">
+							ユーザー: <span className="font-medium">{data.user.email}</span>
+						</p>
+					</div>
+					<LogoutButton />
+				</div>
+			</div>
 		</div>
 	);
 }
