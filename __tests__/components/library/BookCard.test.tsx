@@ -2,10 +2,9 @@
  * BookCard コンポーネントのテスト
  */
 
-import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { BookCard } from '@/components/library/BookCard'
-import { BookStatus, BookType } from '@/lib/models/book'
+import { BookStatus } from '@/lib/models/book'
 import { mockUserBook, createMockBook } from '@/__tests__/fixtures/bookData'
 
 // Next.js router のモック
@@ -19,7 +18,8 @@ jest.mock('next/navigation', () => ({
 // Next.js Image のモック
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => (
+  default: ({ src, alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement> & { src: string; alt: string }) => (
+    // biome-ignore lint/performance/noImgElement: This is a test mock
     <img src={src} alt={alt} {...props} />
   )
 }))
@@ -74,7 +74,7 @@ describe('BookCard - ステータス表示', () => {
   test('読みたい本のステータスが表示される', () => {
     const wantToReadBook = createMockBook({
       status: BookStatus.WANT_TO_READ,
-      progress: 0
+      currentPage: 0
     })
     
     render(<BookCard {...defaultProps} book={wantToReadBook} />)
@@ -86,7 +86,7 @@ describe('BookCard - ステータス表示', () => {
   test('読書中のステータスと進捗バーが表示される', () => {
     const readingBook = createMockBook({
       status: BookStatus.READING,
-      progress: 150,
+      currentPage: 150,
       book: { ...mockUserBook.book, pageCount: 300 }
     })
     
@@ -100,7 +100,7 @@ describe('BookCard - ステータス表示', () => {
   test('読了のステータスが表示される', () => {
     const readBook = createMockBook({
       status: BookStatus.READ,
-      progress: 300,
+      currentPage: 300,
       book: { ...mockUserBook.book, pageCount: 300 }
     })
     

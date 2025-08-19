@@ -2,7 +2,6 @@
  * WishlistCard コンポーネントのテスト
  */
 
-import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { WishlistCard } from '@/components/wishlist/WishlistCard'
 
@@ -17,7 +16,8 @@ jest.mock('next/navigation', () => ({
 // Next.js Image のモック
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => (
+  default: ({ src, alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement> & { src: string; alt: string }) => (
+    // biome-ignore lint/performance/noImgElement: This is a test mock
     <img src={src} alt={alt} {...props} />
   )
 }))
