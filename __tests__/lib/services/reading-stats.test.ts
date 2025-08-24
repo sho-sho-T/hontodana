@@ -1,8 +1,9 @@
 /**
- * 読書統計サービスのテスト
+ * 読書統計サービスのテスト - TDD Red フェーズ
+ * P1優先度テストケース: 基本統計計算、期間別統計、読書速度計算
  */
 
-import { generateReadingStats } from '@/lib/services/reading-stats'
+import { generateReadingStats, calculateReadingSpeed, generateDailyStats, generateMonthlyStats } from '@/lib/services/reading-stats'
 import { prisma } from '@/lib/prisma'
 import { createTestUserBook, createTestReadingSession } from '@/__tests__/fixtures/bookData'
 
@@ -256,5 +257,176 @@ describe('generateReadingStats', () => {
       expect(stats.totalReadingTime).toBe(3000) // 100 sessions * 30 minutes
       expect(stats.totalPagesRead).toBe(500) // 100 sessions * 5 pages
     }, 10000)
+  })
+
+  // TDD Red フェーズ: P1優先度テストケース - 複数書籍の統計集計
+  describe('P1: 複数書籍の統計計算テスト', () => {
+    test('複数書籍の統計が正確に集計される', async () => {
+      // 準備: 複数の書籍データ
+      const book1 = await createTestUserBook({
+        userId: testUserId,
+        status: 'completed',
+        currentPage: 200,
+        book: { pageCount: 200 }
+      })
+      
+      const book2 = await createTestUserBook({
+        userId: testUserId,
+        status: 'reading',
+        currentPage: 100,
+        book: { pageCount: 300 }
+      })
+
+      await createTestReadingSession({
+        userBookId: book1.id,
+        startPage: 1,
+        endPage: 200,
+        durationMinutes: 300
+      })
+      
+      await createTestReadingSession({
+        userBookId: book2.id,
+        startPage: 1,
+        endPage: 100,
+        durationMinutes: 150
+      })
+
+      // 実行
+      const stats = await generateReadingStats(testUserId)
+
+      // 検証
+      expect(stats.booksCompleted).toBe(1)
+      expect(stats.booksInProgress).toBe(1)
+      expect(stats.totalCompletedPages).toBe(200)
+      expect(stats.averageBookLength).toBe(200)
+      expect(stats.totalReadingTime).toBe(450)
+    })
+
+    test('無効なセッションデータは除外される', async () => {
+      const userBook = await createTestUserBook({ userId: testUserId })
+      
+      // 有効なセッション
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 1,
+        endPage: 50,
+        durationMinutes: 60
+      })
+      
+      // 無効なセッション (endPage < startPage)
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 100,
+        endPage: 50, // 無効
+        durationMinutes: -10 // 無効
+      })
+
+      const stats = await generateReadingStats(testUserId)
+
+      expect(stats.totalPagesRead).toBe(49) // 有効なセッションのみ
+      expect(stats.totalReadingTime).toBe(60) // 有効なセッションのみ
+    })
+  })
+
+  // TDD Red フェーズ: P1優先度テストケース - 読書速度計算
+  describe('P1: 読書速度計算テスト', () => {
+    test('平均読書速度が正確に計算される', async () => {
+      const userBook = await createTestUserBook({ userId: testUserId })
+      
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 1,
+        endPage: 60,
+        durationMinutes: 60 // 1ページ/分
+      })
+      
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 61,
+        endPage: 120,
+        durationMinutes: 30 // 2ページ/分
+      })
+
+      const speed = await calculateReadingSpeed(testUserId)
+
+      expect(speed.averageSpeed).toBeCloseTo(1.5) // (1+2)/2
+      expect(speed.minSpeed).toBe(1)
+      expect(speed.maxSpeed).toBe(2)
+    })
+
+    test('異常値は除外して計算される', async () => {
+      const userBook = await createTestUserBook({ userId: testUserId })
+      
+      // 通常のセッション
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 1,
+        endPage: 30,
+        durationMinutes: 30
+      })
+      
+      // 異常に高速なセッション（誤入力想定）
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 31,
+        endPage: 1000,
+        durationMinutes: 1 // 969ページ/分 - 異常値
+      })
+
+      const speed = await calculateReadingSpeed(testUserId)
+
+      // 異常値は除外されること
+      expect(speed.averageSpeed).toBeCloseTo(1) // 29/30 ≈ 1
+      expect(speed.outliers).toHaveLength(1)
+    })
+
+    test('0除算エラーが適切に処理される', async () => {
+      const userBook = await createTestUserBook({ userId: testUserId })
+      
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 1,
+        endPage: 50,
+        durationMinutes: 0 // 0除算ケース
+      })
+
+      const speed = await calculateReadingSpeed(testUserId)
+
+      expect(speed.averageSpeed).toBe(0)
+      expect(speed.validSessions).toBe(0)
+    })
+  })
+
+  // TDD Red フェーズ: P1優先度テストケース - 月別統計計算
+  describe('P1: 月別統計計算テスト', () => {
+    test('月別統計が正確に生成される', async () => {
+      const userBook = await createTestUserBook({ userId: testUserId })
+      
+      const thisMonth = new Date()
+      const lastMonth = new Date(thisMonth)
+      lastMonth.setMonth(lastMonth.getMonth() - 1)
+      
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 1,
+        endPage: 200,
+        durationMinutes: 300,
+        sessionDate: thisMonth
+      })
+      
+      await createTestReadingSession({
+        userBookId: userBook.id,
+        startPage: 201,
+        endPage: 300,
+        durationMinutes: 180,
+        sessionDate: lastMonth
+      })
+
+      const monthlyStats = await generateMonthlyStats(testUserId, 3)
+
+      expect(monthlyStats).toHaveLength(3)
+      expect(monthlyStats[0].pagesRead).toBe(199) // 今月
+      expect(monthlyStats[1].pagesRead).toBe(99) // 先月
+    })
   })
 })
