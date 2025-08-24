@@ -6,7 +6,7 @@ export class BookError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode: number = 400
+    public statusCode = 400
   ) {
     super(message)
     this.name = 'BookError'
@@ -21,35 +21,35 @@ export class ValidationError extends BookError {
 }
 
 export class AuthenticationError extends BookError {
-  constructor(message: string = 'Authentication required') {
+  constructor(message = 'Authentication required') {
     super(message, 'AUTH_ERROR', 401)
     this.name = 'AuthenticationError'
   }
 }
 
 export class AuthorizationError extends BookError {
-  constructor(message: string = 'Access denied') {
+  constructor(message = 'Access denied') {
     super(message, 'AUTHORIZATION_ERROR', 403)
     this.name = 'AuthorizationError'
   }
 }
 
 export class NotFoundError extends BookError {
-  constructor(message: string = 'Resource not found') {
+  constructor(message = 'Resource not found') {
     super(message, 'NOT_FOUND_ERROR', 404)
     this.name = 'NotFoundError'
   }
 }
 
 export class DuplicateError extends BookError {
-  constructor(message: string = 'Resource already exists') {
+  constructor(message = 'Resource already exists') {
     super(message, 'DUPLICATE_ERROR', 409)
     this.name = 'DuplicateError'
   }
 }
 
 export class DatabaseError extends BookError {
-  constructor(message: string = 'Database error occurred') {
+  constructor(message = 'Database error occurred') {
     super(message, 'DATABASE_ERROR', 500)
     this.name = 'DatabaseError'
   }
