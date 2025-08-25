@@ -11,6 +11,7 @@ import { BookStatus } from '@/lib/models/book'
 import type { BookCardProps } from '@/lib/models/book'
 import { ProgressBar } from './ProgressBar'
 import { getStatusLabel, getStatusColor } from '@/lib/utils/book-ui-helpers'
+import { StarRatingDisplay } from '@/components/rating/StarRating'
 
 export function BookCard({ book, onStatusChange, onRemove }: BookCardProps) {
   const router = useRouter()
@@ -79,11 +80,18 @@ export function BookCard({ book, onStatusChange, onRemove }: BookCardProps) {
           </p>
         )}
 
-        {/* ステータスバッジ */}
+        {/* ステータスバッジと評価 */}
         <div className="flex items-center justify-between">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(book.status)}`}>
             {getStatusLabel(book.status)}
           </span>
+          {book.rating && (
+            <StarRatingDisplay 
+              rating={book.rating}
+              size="sm"
+              className="ml-2"
+            />
+          )}
         </div>
 
         {/* 進捗バー（読書中の場合のみ） */}
