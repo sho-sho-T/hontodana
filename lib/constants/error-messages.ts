@@ -32,6 +32,15 @@ export const COLLECTION_ERROR_MESSAGES = {
   BOOK_REMOVE_FAILED: 'コレクションからの書籍削除に失敗しました',
   BOOK_ORDER_UPDATE_FAILED: '書籍の順序更新に失敗しました',
   COLLECTION_DETAIL_GET_FAILED: 'コレクション詳細の取得に失敗しました',
+
+  // Rating・Review関連
+  INVALID_RATING: '評価は1-5の整数値である必要があります',
+  INVALID_REVIEW_LENGTH: 'レビューは2000文字以下で入力してください',
+  RATING_UPDATE_FAILED: '評価の更新に失敗しました',
+  REVIEW_UPDATE_FAILED: 'レビューの更新に失敗しました',
+  RATING_STATS_GET_FAILED: '評価統計の取得に失敗しました',
+  RATED_BOOKS_GET_FAILED: '評価付き書籍の取得に失敗しました',
+  INVALID_BOOK_ID: '無効な書籍IDです',
 } as const;
 
 // 使用例のための型
