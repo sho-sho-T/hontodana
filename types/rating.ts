@@ -72,24 +72,22 @@ export interface RatingActionResult<T = any> {
 
 // StarRatingコンポーネント用の型
 export interface StarRatingProps {
-  value: Rating;
-  onChange: (rating: Rating) => void;
+  rating: Rating;
+  onChange?: (rating: Rating) => void;
   readonly?: boolean;
-  size?: 'small' | 'medium' | 'large';
-  showClearButton?: boolean;
-  disabled?: boolean;
-  'aria-label'?: string;
+  size?: 'sm' | 'md' | 'lg';
+  showLabel?: boolean;
+  className?: string;
 }
 
 // ReviewEditorコンポーネント用の型
 export interface ReviewEditorProps {
-  value: Review;
-  onChange: (review: Review) => void;
-  maxLength?: number;
+  review: Review;
+  onSave?: (review: Review) => Promise<void> | void;
+  onCancel?: () => void;
+  readonly?: boolean;
   placeholder?: string;
-  autoSave?: boolean;
-  disabled?: boolean;
-  'aria-label'?: string;
+  className?: string;
 }
 
 // ReviewDisplayコンポーネント用の型
@@ -104,11 +102,9 @@ export interface ReviewDisplayProps {
 
 // RatingStatsCardコンポーネント用の型
 export interface RatingStatsCardProps {
-  stats: RatingStats;
+  stats: RatingStats | null;
   loading?: boolean;
-  showDistribution?: boolean;
-  period?: 'all' | 'year' | 'month';
-  onPeriodChange?: (period: 'all' | 'year' | 'month') => void;
+  className?: string;
 }
 
 // バリデーション用のスキーマ型
