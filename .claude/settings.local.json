@@ -40,7 +40,8 @@
       "mcp__serena__think_about_collected_information",
       "mcp__serena__think_about_task_adherence",
       "Bash(npm run typecheck:*)",
-      "mcp__serena__replace_symbol_body"
+      "mcp__serena__replace_symbol_body",
+      "mcp__serena__insert_before_symbol"
     ],
     "deny": []
   },
