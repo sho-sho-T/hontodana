@@ -87,3 +87,30 @@ export interface ProfileValidationResult {
   valid: boolean
   errors: ProfileValidationError[]
 }
+
+// TASK-301で追加: テスト用の型定義
+export interface UserPreferences {
+  theme: Theme
+  displayMode: DisplayMode
+  booksPerPage: number
+  defaultBookType: BookType
+  readingGoal?: number
+}
+
+export interface UserSettingsProps {
+  settings: UserPreferences
+  onSave: (settings: UserPreferences) => Promise<void>
+  loading: boolean
+}
+
+export interface UserProfileUpdate {
+  name: string
+  email: string
+  avatarUrl?: string
+}
+
+export interface ActionResult<T = any> {
+  success: boolean
+  data?: T
+  error?: string
+}
