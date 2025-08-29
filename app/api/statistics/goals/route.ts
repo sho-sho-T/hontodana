@@ -157,8 +157,7 @@ export async function POST(request: NextRequest) {
 
 // 目標取得
 export async function GET(
-  request: NextRequest, 
-  context?: { params?: { id?: string, action?: string } }
+  request: NextRequest
 ) {
   try {
     // 認証チェック
@@ -172,8 +171,10 @@ export async function GET(
       )
     }
 
-    const goalId = context?.params?.id
-    const action = context?.params?.action
+    // URLパラメータを取得
+    const url = new URL(request.url)
+    const goalId = url.searchParams.get('id')
+    const action = url.searchParams.get('action')
 
     if (goalId) {
       // 特定の目標を取得
@@ -223,8 +224,7 @@ export async function GET(
 
 // 目標更新
 export async function PUT(
-  request: NextRequest,
-  context?: { params?: { id?: string } }
+  request: NextRequest
 ) {
   try {
     // 認証チェック
@@ -238,7 +238,8 @@ export async function PUT(
       )
     }
 
-    const goalId = context?.params?.id
+    const url = new URL(request.url)
+    const goalId = url.searchParams.get('id')
     if (!goalId) {
       return NextResponse.json(
         { error: { code: 'BAD_REQUEST', message: 'Goal ID is required' } },
@@ -295,8 +296,7 @@ export async function PUT(
 
 // 目標削除
 export async function DELETE(
-  request: NextRequest,
-  context?: { params?: { id?: string } }
+  request: NextRequest
 ) {
   try {
     // 認証チェック
@@ -310,7 +310,8 @@ export async function DELETE(
       )
     }
 
-    const goalId = context?.params?.id
+    const url = new URL(request.url)
+    const goalId = url.searchParams.get('id')
     if (!goalId) {
       return NextResponse.json(
         { error: { code: 'BAD_REQUEST', message: 'Goal ID is required' } },
