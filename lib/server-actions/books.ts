@@ -4,26 +4,24 @@
 
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
-import { prisma } from '@/lib/prisma'
-import { normalizeBookData } from '@/lib/utils/book-normalizer'
-import { validateNormalizedBookData, validateUserId, isValidBookStatus, isValidBookType } from '@/lib/validation/book-validation'
-import { BookStatus, BookType } from '@/lib/models/book'
+import { revalidatePath, unstable_cache } from 'next/cache'
 import { ERROR_MESSAGES, PAGINATION } from '@/lib/config/book-constants'
 import { 
   AuthenticationError, 
   ValidationError as BookValidationError,
   DuplicateError, 
-  DatabaseError,
   errorToResponse 
 } from '@/lib/errors/book-errors'
+import { BookStatus, BookType } from '@/lib/models/book'
+import { prisma } from '@/lib/prisma'
+import { createClient } from '@/lib/supabase/server'
+import { normalizeBookData } from '@/lib/utils/book-normalizer'
+import { isValidBookStatus, isValidBookType, validateNormalizedBookData, validateUserId } from '@/lib/validation/book-validation'
 import type { 
   GoogleBooksApiResponse, 
   UserBookWithBook,
   ServerActionResult,
-  CreateUserBookData
-} from '@/lib/models/book'
+  CreateUserBookData/book'
 
 /**
  * 認証されたユーザーIDを取得
@@ -212,19 +210,14 @@ export async function removeBookFromLibrary(
 }
 
 /**
- * ユーザーの書籍リストを取得
+ * ユーザーの書籍リストを取得（キャッシュなし版）
  */
-export async function getUserBooks(
+async function getUserBooksUncached(
+  userId: string,
   status?: BookStatus,
   limit: number = PAGINATION.DEFAULT_LIMIT,
-  offset: number = 0
-): Promise<ServerActionResult<UserBookWithBook[]>> {
-  try {
-    const userId = await getAuthenticatedUserId()
-    if (!userId) {
-      throw new AuthenticationError()
-    }
-
+  offset = 0
+): Promise<UserBookWithBook[]> {
     validateUserId(userId)
 
     if (status && !isValidBookStatus(status)) {
@@ -254,6 +247,35 @@ export async function getUserBooks(
       skip: offset
     })
 
+    return userBooks
+}
+
+/**
+ * ユーザーの書籍リストを取得（キャッシュ版）
+ */
+export async function getUserBooks(
+  status?: BookStatus,
+  limit: number = PAGINATION.DEFAULT_LIMIT,
+  offset = 0
+): Promise<ServerActionResult<UserBookWithBook[]>> {
+  try {
+    const userId = await getAuthenticatedUserId()
+    if (!userId) {
+      throw new AuthenticationError()
+    }
+
+    // キャッシュ関数を作成
+    const getCachedUserBooks = unstable_cache(
+      (userId: string, status?: BookStatus, limit?: number, offset?: number) => 
+        getUserBooksUncached(userId, status, limit, offset),
+      ['user-books'],
+      { 
+        revalidate: 60, // 1分間キャッシュ
+        tags: [`user-books-${userId}`]
+      }
+    )
+
+    const userBooks = await getCachedUserBooks(userId, status, limit, offset)
     return userBooks
 
   } catch (error) {
