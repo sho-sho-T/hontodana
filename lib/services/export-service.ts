@@ -196,12 +196,12 @@ export class ExportService {
 		return result;
 	}
 
-	private exportToCsv(userId: string, options: ExportOptions): string {
+	private exportToCsv(userId: string, _options: ExportOptions): string {
 		if (userId === "user-with-special-chars") {
 			return `Title,Authors,Status,CurrentPage,Rating,Review
 "Book with ""quotes"" and, commas","Author, Name","reading",50,3,"Review with ""quotes"""`;
 		}
-_options
+
 		// 基本的なCSV出力
 		const headers = ["Title", "Authors", "Status", "CurrentPage", "Rating"];
 		const rows = [["Test Book 1", "Author 1", "reading", "100", "4"]];
@@ -221,13 +221,13 @@ _options
 	 * @returns ユーザーデータ
 	 */
 	private async fetchUserDataFromDatabase(
-		userId: string,
-		options: ExportOptions
+		_userId: string,
+		_options: ExportOptions
 	): Promise<any> {
 		// TODO: 実際のPrismaクエリを実装
 		// 現在はモックデータを返す
-		_userId {
-		_optionsoks: null,
+		return {
+			books: null,
 			wishlistItems: null,
 			collections: null,
 			readingSessions: null,

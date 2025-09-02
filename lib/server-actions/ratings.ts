@@ -133,7 +133,7 @@ async function validateUserAndPermission(
   // 権限チェック
   const permissionCheck = await checkUserBookPermission(userBookId, user.id);
   if (!permissionCheck.success) {
-    return { success: false, error: permissionCheck.error };
+    return { success: false, error: permissionCheck.error || 'Permission denied' };
   }
 
   return { success: true, user };

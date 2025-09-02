@@ -26,25 +26,25 @@ export class DuplicateHandler {
 
 	mergeBookData(existingBook: any, newBook: any): any {
 		// 最小実装: より新しい/完全なデータを優先
+		const filteredNewBook = Object.fromEntries(
+			Object.entries(newBook).filter(
+				([key, value]) =>
+					value !== undefined && value !== null && value !== ""
+			)
+		);
+
 		return {
 			...existingBook,
-			// 新しいデータがある場合は更新
+			...filteredNewBook,
+			// 特別な処理が必要なフィールド
 			rating:
 				newBook.rating !== undefined ? newBook.rating : existingBook.rating,
 			review: newBook.review || existingBook.review,
 			currentPage: Math.max(
 				newBook.currentPage || 0,
 				existingBook.currentPage || 0
-			),
-			// その他のフィールドも新しいデータを優先
-			...Object.fromEntries(
-				Object.entries(newBook).filter(
-					([key, value]) =>
-						value !== undefined && value !== null && value !== ""
-				)
-			),
+			)
 		};
-		_key;
 	}
 
 	private calculateStringSimilarity(str1: string, str2: string): number {

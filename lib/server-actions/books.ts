@@ -21,7 +21,8 @@ import type {
   GoogleBooksApiResponse, 
   UserBookWithBook,
   ServerActionResult,
-  CreateUserBookData/book'
+  CreateUserBookData
+} from '@/lib/models/book'
 
 /**
  * 認証されたユーザーIDを取得

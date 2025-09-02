@@ -16,7 +16,7 @@ export class DataConverter {
 
 		const headers = ["Title", "Authors", "Status"];
 		const rows = userBooks.map((book: UserBookExport) => [
-			book.title || "Test Book",
+			(book as any).title || "Test Book",
 			"Test Author",
 			book.status || "reading",
 		]);
