@@ -28,12 +28,11 @@ const ReadingProgressChart = dynamic(
 
 export interface DynamicReadingProgressChartProps {
 	data: DailyStats[];
-	type: "pages" | "minutes" | "sessions" | "combined";
-	timeRange: "week" | "month" | "year" | "all";
-	onTimeRangeChange?: (range: "week" | "month" | "year" | "all") => void;
-	onTypeChange?: (type: "pages" | "minutes" | "sessions" | "combined") => void;
+	type: "pages" | "minutes" | "sessions";
+	title?: string;
 	height?: number;
-	showControls?: boolean;
+	showTrend?: boolean;
+	className?: string;
 }
 
 export function DynamicReadingProgressChart(

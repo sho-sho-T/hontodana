@@ -25,17 +25,21 @@ const BookDistributionChart = dynamic(
 	}
 );
 
+export interface BookDistributionData {
+	label: string;
+	value: number;
+	color?: string;
+}
+
 export interface DynamicBookDistributionChartProps {
-	data: {
-		labels: string[];
-		values: number[];
-	};
+	data: BookDistributionData[];
 	type: "doughnut" | "bar";
 	title?: string;
 	height?: number;
-	onChartTypeChange?: (type: "doughnut" | "bar") => void;
-	showTypeToggle?: boolean;
-	colors?: string[];
+	showLegend?: boolean;
+	showPercentage?: boolean;
+	className?: string;
+	onSegmentClick?: (data: BookDistributionData, index: number) => void;
 }
 
 export function DynamicBookDistributionChart(

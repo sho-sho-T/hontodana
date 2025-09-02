@@ -77,7 +77,7 @@ export function RatingStatsCard({
           {averageRating !== null ? (
             <div className="flex items-center gap-3">
               <StarRatingDisplay 
-                rating={Math.round(averageRating)} 
+                rating={Math.round(averageRating) as any} 
                 size="md" 
               />
               <span className="text-lg font-semibold text-gray-900">

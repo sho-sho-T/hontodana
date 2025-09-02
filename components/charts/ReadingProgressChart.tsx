@@ -230,8 +230,8 @@ export const ReadingProgressChart = React.memo<ReadingProgressChartProps>(functi
       <div style={{ height: `${height}px` }}>
         <Line
           ref={chartRef}
-          data={chartData}
-          options={options}
+          data={chartData as any}
+          options={options as any}
         />
       </div>
     </Card>

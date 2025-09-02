@@ -107,7 +107,7 @@ export function BookCard({ book, onStatusChange, onRemove }: BookCardProps) {
 					</span>
 					{book.rating && (
 						<StarRatingDisplay
-							rating={book.rating}
+							rating={book.rating as any}
 							size="sm"
 							className="ml-2"
 						/>
