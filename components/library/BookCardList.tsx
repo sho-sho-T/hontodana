@@ -6,17 +6,30 @@ import type { BookStatus, UserBookWithBook } from '@/lib/models/book'
 interface BookCardListProps {
   books: UserBookWithBook[]
   viewMode?: 'grid' | 'list'
+  onStatusChange?: (bookId: string, status: BookStatus) => Promise<void> | void
+  onRemove?: (bookId: string) => Promise<void> | void
 }
 
-export function BookCardList({ books, viewMode = 'grid' }: BookCardListProps) {
-  const handleStatusChange = (bookId: string, status: BookStatus) => {
-    console.log('Status changed:', bookId, status)
-    // TODO: Implement actual status change logic with Server Actions
+export function BookCardList({ 
+  books, 
+  viewMode = 'grid', 
+  onStatusChange,
+  onRemove 
+}: BookCardListProps) {
+  const handleStatusChange = async (bookId: string, status: BookStatus) => {
+    if (onStatusChange) {
+      await onStatusChange(bookId, status)
+    } else {
+      console.log('Status changed:', bookId, status)
+    }
   }
   
-  const handleRemove = (bookId: string) => {
-    console.log('Book removed:', bookId)
-    // TODO: Implement actual remove logic with Server Actions
+  const handleRemove = async (bookId: string) => {
+    if (onRemove) {
+      await onRemove(bookId)
+    } else {
+      console.log('Book removed:', bookId)
+    }
   }
 
   return (

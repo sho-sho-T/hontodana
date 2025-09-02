@@ -5,22 +5,39 @@ import type { WishlistItemWithBook } from '@/lib/models/wishlist'
 
 interface WishlistCardListProps {
   items: WishlistItemWithBook[]
+  onPriorityChange?: (id: string, newPriority: string) => Promise<void> | void
+  onRemove?: (id: string) => Promise<void> | void
+  onMoveToLibrary?: (id: string) => Promise<void> | void
 }
 
-export function WishlistCardList({ items }: WishlistCardListProps) {
-  const handlePriorityChange = (id: string, newPriority: string) => {
-    console.log('Priority changed:', id, newPriority)
-    // TODO: Implement actual priority change logic with Server Actions
+export function WishlistCardList({ 
+  items, 
+  onPriorityChange,
+  onRemove,
+  onMoveToLibrary 
+}: WishlistCardListProps) {
+  const handlePriorityChange = async (id: string, newPriority: string) => {
+    if (onPriorityChange) {
+      await onPriorityChange(id, newPriority)
+    } else {
+      console.log('Priority changed:', id, newPriority)
+    }
   }
   
-  const handleRemove = (id: string) => {
-    console.log('Removed from wishlist:', id)
-    // TODO: Implement actual remove logic with Server Actions
+  const handleRemove = async (id: string) => {
+    if (onRemove) {
+      await onRemove(id)
+    } else {
+      console.log('Removed from wishlist:', id)
+    }
   }
   
-  const handleMoveToLibrary = (id: string) => {
-    console.log('Moved to library:', id)
-    // TODO: Implement actual move to library logic with Server Actions
+  const handleMoveToLibrary = async (id: string) => {
+    if (onMoveToLibrary) {
+      await onMoveToLibrary(id)
+    } else {
+      console.log('Moved to library:', id)
+    }
   }
 
   return (
