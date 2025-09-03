@@ -274,7 +274,7 @@ export function LibraryApp({ user }: LibraryAppProps) {
 		return (
 			<div className="flex items-center justify-center h-64">
 				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
 					<p className="mt-4 text-gray-600">データを読み込んでいます...</p>
 				</div>
 			</div>
@@ -289,6 +289,7 @@ export function LibraryApp({ user }: LibraryAppProps) {
 				{/* Simple Tab Navigation */}
 				<div className="flex space-x-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
 					<button
+						type="button"
 						onClick={() => setActiveTab("dashboard")}
 						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
 							activeTab === "dashboard"
@@ -299,6 +300,7 @@ export function LibraryApp({ user }: LibraryAppProps) {
 						📊 ダッシュボード
 					</button>
 					<button
+						type="button"
 						onClick={() => setActiveTab("search")}
 						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
 							activeTab === "search"
@@ -309,6 +311,7 @@ export function LibraryApp({ user }: LibraryAppProps) {
 						🔍 書籍検索
 					</button>
 					<button
+						type="button"
 						onClick={() => setActiveTab("library")}
 						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
 							activeTab === "library"
@@ -319,6 +322,7 @@ export function LibraryApp({ user }: LibraryAppProps) {
 						📚 マイライブラリ
 					</button>
 					<button
+						type="button"
 						onClick={() => setActiveTab("wishlist")}
 						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
 							activeTab === "wishlist"
