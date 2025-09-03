@@ -70,7 +70,8 @@ export function Search({
 										<Image
 											src={book.thumbnail || "/images/book-placeholder.png"}
 											alt={book.title}
-											className="w-16 h-24 object-cover rounded"
+											width={96}
+											height={96}
 										/>
 										<div className="flex-1">
 											<h4 className="font-semibold text-lg">{book.title}</h4>
