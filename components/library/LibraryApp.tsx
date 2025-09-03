@@ -1,21 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SearchForm } from "@/components/search/SearchForm";
-import { BookCardList } from "@/components/library/BookCardList";
-import { WishlistCardList } from "@/components/wishlist/WishlistCardList";
-import { StatsSummaryCard } from "@/components/dashboard/StatsSummaryCard";
-import { StarRating } from "@/components/rating/StarRating";
 import { OfflineNotice } from "@/components/offline/OfflineNotice";
+import { Dashboard } from "@/components/library/Dashboard";
+import { Search } from "@/components/library/Search";
+import { Library } from "@/components/library/Library";
+import { Wishlist } from "@/components/library/Wishlist";
 import { GoogleBooksClient } from "@/lib/google-books/client";
 import {
 	addBookToLibrary,
@@ -342,279 +332,38 @@ export function LibraryApp({ user }: LibraryAppProps) {
 
 				{/* Dashboard Tab */}
 				{activeTab === "dashboard" && (
-					<div className="space-y-6">
-						<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-							<StatsSummaryCard
-								title="総書籍数"
-								value={stats.totalBooks}
-								unit="books"
-								icon="📚"
-							/>
-							<StatsSummaryCard
-								title="読了書籍"
-								value={stats.booksRead}
-								unit="books"
-								icon="✅"
-							/>
-							<StatsSummaryCard
-								title="平均評価"
-								value={stats.averageRating}
-								unit="speed"
-								icon="⭐"
-							/>
-							<StatsSummaryCard
-								title="総ページ数"
-								value={stats.totalPages}
-								unit="pages"
-								icon="📖"
-							/>
-						</div>
-
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<Card>
-								<CardHeader>
-									<CardTitle>読書ステータス</CardTitle>
-									<CardDescription>現在の読書状況</CardDescription>
-								</CardHeader>
-								<CardContent className="space-y-4">
-									<div className="flex items-center justify-between">
-										<span>読み終わった本</span>
-										<span className="px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded-full">
-											{stats.booksRead}冊
-										</span>
-									</div>
-									<div className="flex items-center justify-between">
-										<span>読んでいる本</span>
-										<span className="px-2 py-1 text-sm bg-green-100 text-green-800 rounded-full">
-											{stats.booksReading}冊
-										</span>
-									</div>
-									<div className="flex items-center justify-between">
-										<span>読みたい本</span>
-										<span className="px-2 py-1 text-sm bg-gray-100 text-gray-800 rounded-full">
-											{stats.booksWantToRead}冊
-										</span>
-									</div>
-								</CardContent>
-							</Card>
-
-							<Card>
-								<CardHeader>
-									<CardTitle>最近追加した書籍</CardTitle>
-									<CardDescription>最新の3冊</CardDescription>
-								</CardHeader>
-								<CardContent>
-									{myBooks.slice(0, 3).map((book) => (
-										<div
-											key={book.id}
-											className="flex items-center space-x-3 py-2"
-										>
-											<img
-												src={
-													book.book.thumbnailUrl ||
-													"/images/book-placeholder.png"
-												}
-												alt={book.book.title}
-												className="w-10 h-14 object-cover rounded"
-											/>
-											<div className="flex-1 min-w-0">
-												<p className="text-sm font-medium truncate">
-													{book.book.title}
-												</p>
-												<p className="text-xs text-gray-500 truncate">
-													{book.book.authors.join(", ")}
-												</p>
-											</div>
-											<div className="px-2 py-1 text-xs bg-gray-100 rounded-full">
-												{book.status === "completed" && "読了"}
-												{book.status === "reading" && "読書中"}
-												{book.status === "want_to_read" && "読みたい"}
-											</div>
-										</div>
-									))}
-									{myBooks.length === 0 && (
-										<p className="text-gray-500 text-center py-4">
-											まだ書籍が登録されていません
-										</p>
-									)}
-								</CardContent>
-							</Card>
-						</div>
-					</div>
+					<Dashboard myBooks={myBooks} stats={stats} />
 				)}
 
 				{/* Search Tab */}
 				{activeTab === "search" && (
-					<div className="space-y-6">
-						<Card>
-							<CardHeader>
-								<CardTitle>📖 書籍検索</CardTitle>
-								<CardDescription>
-									Google Books APIを使用して書籍を検索
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<SearchForm onSearch={handleSearch} />
-							</CardContent>
-						</Card>
-
-						{isSearching && (
-							<div className="flex items-center justify-center h-32">
-								<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-								<span className="ml-2">検索中...</span>
-							</div>
-						)}
-
-						{searchResults.length > 0 && (
-							<div className="space-y-4">
-								<h3 className="text-lg font-semibold">
-									検索結果 ({searchResults.length}件)
-								</h3>
-								<div className="grid gap-4">
-									{searchResults.map((book) => (
-										<Card key={book.id}>
-											<CardContent className="p-4">
-												<div className="flex gap-4">
-													<img
-														src={
-															book.thumbnail || "/images/book-placeholder.png"
-														}
-														alt={book.title}
-														className="w-16 h-24 object-cover rounded"
-													/>
-													<div className="flex-1">
-														<h4 className="font-semibold text-lg">
-															{book.title}
-														</h4>
-														<p className="text-gray-600 mb-2">
-															{book.authors.join(", ")} | {book.publisher}
-														</p>
-														{book.description && (
-															<p className="text-sm text-gray-700 mb-3 line-clamp-2">
-																{book.description}
-															</p>
-														)}
-														<div className="flex gap-2 flex-wrap">
-															{book.categories?.slice(0, 3).map((category) => (
-																<span
-																	key={category}
-																	className="px-2 py-1 text-xs bg-gray-100 rounded-full"
-																>
-																	{category}
-																</span>
-															))}
-														</div>
-													</div>
-													<div className="flex flex-col gap-2">
-														<Button
-															size="sm"
-															onClick={() =>
-																handleAddToLibrary(
-																	book,
-																	"want_to_read" as BookStatus
-																)
-															}
-														>
-															読みたい
-														</Button>
-														<Button
-															size="sm"
-															onClick={() =>
-																handleAddToLibrary(
-																	book,
-																	"reading" as BookStatus
-																)
-															}
-															variant="secondary"
-														>
-															読書中
-														</Button>
-														<Button
-															size="sm"
-															onClick={() =>
-																handleAddToLibrary(
-																	book,
-																	"completed" as BookStatus
-																)
-															}
-															variant="outline"
-														>
-															読了
-														</Button>
-													</div>
-												</div>
-											</CardContent>
-										</Card>
-									))}
-								</div>
-							</div>
-						)}
-					</div>
+					<Search
+						searchResults={searchResults}
+						isSearching={isSearching}
+						onSearch={handleSearch}
+						onAddToLibrary={handleAddToLibrary}
+					/>
 				)}
 
 				{/* Library Tab */}
 				{activeTab === "library" && (
-					<div className="space-y-6">
-						<Card>
-							<CardHeader>
-								<CardTitle>📚 マイライブラリ</CardTitle>
-								<CardDescription>
-									あなたの書籍コレクション ({myBooks.length}冊)
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								{myBooks.length > 0 ? (
-									<BookCardList
-										books={myBooks}
-										onStatusChange={handleStatusChange}
-										onRemove={handleRemoveBook}
-									/>
-								) : (
-									<div className="text-center py-12">
-										<p className="text-gray-500 mb-4">
-											まだ書籍が登録されていません
-										</p>
-										<Button onClick={() => setActiveTab("search")}>
-											書籍を検索する
-										</Button>
-									</div>
-								)}
-							</CardContent>
-						</Card>
-					</div>
+					<Library
+						myBooks={myBooks}
+						onStatusChange={handleStatusChange}
+						onRemove={handleRemoveBook}
+						onSearchClick={() => setActiveTab("search")}
+					/>
 				)}
 
 				{/* Wishlist Tab */}
 				{activeTab === "wishlist" && (
-					<div className="space-y-6">
-						<Card>
-							<CardHeader>
-								<CardTitle>💝 ウィッシュリスト</CardTitle>
-								<CardDescription>
-									読みたい本のリスト ({wishlist.length}件)
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								{wishlist.length > 0 ? (
-									<WishlistCardList
-										items={wishlist}
-										onPriorityChange={handleWishlistPriorityChange}
-										onMoveToLibrary={handleMoveToLibrary}
-										onRemove={handleRemoveFromWishlist}
-									/>
-								) : (
-									<div className="text-center py-12">
-										<p className="text-gray-500 mb-4">
-											ウィッシュリストは空です
-										</p>
-										<Button onClick={() => setActiveTab("search")}>
-											書籍を検索する
-										</Button>
-									</div>
-								)}
-							</CardContent>
-						</Card>
-					</div>
+					<Wishlist
+						wishlist={wishlist}
+						onPriorityChange={handleWishlistPriorityChange}
+						onMoveToLibrary={handleMoveToLibrary}
+						onRemove={handleRemoveFromWishlist}
+						onSearchClick={() => setActiveTab("search")}
+					/>
 				)}
 			</div>
 		</div>
