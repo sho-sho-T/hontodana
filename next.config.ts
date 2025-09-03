@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
 		// パッケージのインポートを最適化してバンドルサイズを削減
 		optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
 	},
-	
+
 	// 画像最適化の設定
 	images: {
 		// 外部画像ソースの許可設定（Google Books APIからの書影取得用）
@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
 				hostname: "books.google.com",
 				port: "",
 				pathname: "/books/**", // Google Books APIの書影URL
+			},
+			// HTTP版も追加
+			{
+				protocol: "http",
+				hostname: "books.google.com",
+				port: "",
+				pathname: "/books/**", // Google Books APIの書影URL（HTTP版）
 			},
 			{
 				protocol: "https",
@@ -31,13 +38,13 @@ const nextConfig: NextConfig = {
 			},
 		],
 	},
-	
+
 	// TypeScript設定
 	typescript: {
 		// 型チェックエラーがあってもビルドを継続（開発時の利便性向上）
 		ignoreBuildErrors: false,
 	},
-	
+
 	// ESLint設定（Biomeを使用するため無効化）
 	eslint: {
 		ignoreDuringBuilds: true, // BiomeでLintingを行うためESLintは無効
