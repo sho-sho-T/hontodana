@@ -29,9 +29,9 @@ export default async function ProtectedPage() {
 					</div>
 				</div>
 			</header>
-			
+
 			{/* メインアプリケーション */}
-			<LibraryApp user={data.user} />
+			<LibraryApp />
 		</div>
 	);
 }
