@@ -15,22 +15,16 @@ import {
 } from "@/lib/server-actions/books";
 import {
 	getUserWishlist,
-	addToWishlist,
 	updateWishlistPriority,
 	removeFromWishlist,
 	moveToLibrary,
 } from "@/lib/server-actions/wishlist";
-import type { User } from "@supabase/supabase-js";
 import type {
 	UserBookWithBook,
 	BookStatus,
 	GoogleBooksApiResponse,
 } from "@/lib/models/book";
 import type { WishlistItemWithBook } from "@/lib/models/wishlist";
-
-interface LibraryAppProps {
-	user: User;
-}
 
 interface SearchResult {
 	id: string;
@@ -43,7 +37,7 @@ interface SearchResult {
 	categories?: string[];
 }
 
-export function LibraryApp({ user }: LibraryAppProps) {
+export function LibraryApp() {
 	// State management
 	const [activeTab, setActiveTab] = useState("dashboard");
 	const [myBooks, setMyBooks] = useState<UserBookWithBook[]>([]);
