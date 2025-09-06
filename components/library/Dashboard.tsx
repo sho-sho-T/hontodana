@@ -93,7 +93,8 @@ export function Dashboard({ myBooks, stats }: DashboardProps) {
 								<Image
 									src={book.book.thumbnailUrl || "/images/book-placeholder.png"}
 									alt={book.book.title}
-									className="w-10 h-14 object-cover rounded"
+									width={96}
+									height={96}
 								/>
 								<div className="flex-1 min-w-0">
 									<p className="text-sm font-medium truncate">
