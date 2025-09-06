@@ -95,6 +95,7 @@ export function Dashboard({ myBooks, stats }: DashboardProps) {
 									alt={book.book.title}
 									width={96}
 									height={96}
+									unoptimized // 外部画像でNext.jsの画像最適化と干渉しているため、Next.jsの画像最適化を無効
 								/>
 								<div className="flex-1 min-w-0">
 									<p className="text-sm font-medium truncate">

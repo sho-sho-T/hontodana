@@ -72,6 +72,7 @@ export function Search({
 											alt={book.title}
 											width={96}
 											height={96}
+											unoptimized // 外部画像でNext.jsの画像最適化と干渉しているため、Next.jsの画像最適化を無効
 										/>
 										<div className="flex-1">
 											<h4 className="font-semibold text-lg">{book.title}</h4>

@@ -79,6 +79,7 @@ export function BookCard({ book, onStatusChange, onRemove }: BookCardProps) {
 					className="object-cover"
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					priority={false}
+					unoptimized // 外部画像でNext.jsの画像最適化と干渉しているため、Next.jsの画像最適化を無効
 				/>
 			</div>
 
