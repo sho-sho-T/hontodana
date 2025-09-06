@@ -58,7 +58,7 @@ model UserProfile {
 }
 
 model Book {
-  id            String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id            String   @id @default(uuid()) @db.Uuid
   googleBooksId String?  @unique @map("google_books_id")
   title         String
   authors       String[] @default([])
@@ -85,7 +85,7 @@ model Book {
 }
 
 model UserBook {
-  id           String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id           String        @id @default(uuid()) @db.Uuid
   userId       String        @map("user_id") @db.Uuid
   bookId       String        @map("book_id") @db.Uuid
   bookType     BookType      @default(physical) @map("book_type")
@@ -113,7 +113,7 @@ model UserBook {
 }
 
 model ReadingSession {
-  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id              String   @id @default(uuid()) @db.Uuid
   userBookId      String   @map("user_book_id") @db.Uuid
   startPage       Int      @map("start_page")
   endPage         Int      @map("end_page")
@@ -129,7 +129,7 @@ model ReadingSession {
 }
 
 model WishlistItem {
-  id         String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id         String            @id @default(uuid()) @db.Uuid
   userId     String            @map("user_id") @db.Uuid
   bookId     String            @map("book_id") @db.Uuid
   priority   WishlistPriority  @default(medium)
@@ -147,7 +147,7 @@ model WishlistItem {
 }
 
 model Collection {
-  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   userId      String   @map("user_id") @db.Uuid
   name        String
   description String?
@@ -166,7 +166,7 @@ model Collection {
 }
 
 model CollectionBook {
-  id           String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id           String   @id @default(uuid()) @db.Uuid
   collectionId String   @map("collection_id") @db.Uuid
   userBookId   String   @map("user_book_id") @db.Uuid
   sortOrder    Int      @default(0) @map("sort_order")
