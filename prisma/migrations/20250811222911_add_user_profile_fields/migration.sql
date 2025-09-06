@@ -23,9 +23,12 @@ CREATE TABLE "public"."user_profiles" (
     CONSTRAINT "user_profiles_pkey" PRIMARY KEY ("id")
 );
 
+-- Enable UUID extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- CreateTable
 CREATE TABLE "public"."books" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "google_books_id" TEXT,
     "title" TEXT NOT NULL,
     "authors" TEXT[] DEFAULT ARRAY[]::TEXT[],
@@ -50,7 +53,7 @@ CREATE TABLE "public"."books" (
 
 -- CreateTable
 CREATE TABLE "public"."user_books" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "book_id" UUID NOT NULL,
     "book_type" "public"."BookType" NOT NULL DEFAULT 'physical',
@@ -73,7 +76,7 @@ CREATE TABLE "public"."user_books" (
 
 -- CreateTable
 CREATE TABLE "public"."reading_sessions" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_book_id" UUID NOT NULL,
     "start_page" INTEGER NOT NULL,
     "end_page" INTEGER NOT NULL,
@@ -88,7 +91,7 @@ CREATE TABLE "public"."reading_sessions" (
 
 -- CreateTable
 CREATE TABLE "public"."wishlist_items" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "book_id" UUID NOT NULL,
     "priority" "public"."WishlistPriority" NOT NULL DEFAULT 'medium',
@@ -103,7 +106,7 @@ CREATE TABLE "public"."wishlist_items" (
 
 -- CreateTable
 CREATE TABLE "public"."collections" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "user_id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
@@ -119,7 +122,7 @@ CREATE TABLE "public"."collections" (
 
 -- CreateTable
 CREATE TABLE "public"."collection_books" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "collection_id" UUID NOT NULL,
     "user_book_id" UUID NOT NULL,
     "sort_order" INTEGER NOT NULL DEFAULT 0,
