@@ -1,11 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { OfflineNotice } from "@/components/offline/OfflineNotice";
-import { Dashboard } from "@/components/library/Dashboard";
-import { Search } from "@/components/library/Search";
-import { Library } from "@/components/library/Library";
-import { Wishlist } from "@/components/library/Wishlist";
+import { useState, useEffect, createContext, useContext } from "react";
 import { GoogleBooksClient } from "@/lib/google-books/client";
 import {
 	addBookToLibrary,
@@ -37,9 +32,54 @@ interface SearchResult {
 	categories?: string[];
 }
 
-export function LibraryApp() {
+interface LibraryStats {
+	totalBooks: number;
+	booksRead: number;
+	booksReading: number;
+	booksWantToRead: number;
+	averageRating: number;
+	totalPages: number;
+	wishlistCount: number;
+}
+
+interface LibraryContextType {
+	// State
+	myBooks: UserBookWithBook[];
+	wishlist: WishlistItemWithBook[];
+	searchResults: SearchResult[];
+	isLoading: boolean;
+	isSearching: boolean;
+	stats: LibraryStats;
+
+	// Actions
+	handleSearch: (params: { query: string; filters: any }) => Promise<void>;
+	handleAddToLibrary: (
+		book: SearchResult,
+		status?: BookStatus
+	) => Promise<void>;
+	handleStatusChange: (bookId: string, newStatus: BookStatus) => Promise<void>;
+	handleRemoveBook: (bookId: string) => Promise<void>;
+	handleWishlistPriorityChange: (
+		id: string,
+		newPriority: string
+	) => Promise<void>;
+	handleMoveToLibrary: (id: string) => Promise<void>;
+	handleRemoveFromWishlist: (id: string) => Promise<void>;
+	loadUserData: () => Promise<void>;
+}
+
+const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
+
+export function useLibrary() {
+	const context = useContext(LibraryContext);
+	if (context === undefined) {
+		throw new Error("useLibrary must be used within a LibraryProvider");
+	}
+	return context;
+}
+
+export function LibraryProvider({ children }: { children: React.ReactNode }) {
 	// State management
-	const [activeTab, setActiveTab] = useState("dashboard");
 	const [myBooks, setMyBooks] = useState<UserBookWithBook[]>([]);
 	const [wishlist, setWishlist] = useState<WishlistItemWithBook[]>([]);
 	const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -74,13 +114,14 @@ export function LibraryApp() {
 			const booksResponse = await getUserBooks();
 			if (booksResponse && Array.isArray(booksResponse)) {
 				setMyBooks(booksResponse);
-				calculateStats(booksResponse);
+				calculateStats(booksResponse, wishlist);
 			}
 
 			// Load wishlist
 			const wishlistResponse = await getUserWishlist();
 			if (wishlistResponse.success && wishlistResponse.data) {
 				setWishlist(wishlistResponse.data);
+				calculateStats(myBooks, wishlistResponse.data);
 			}
 		} catch (error) {
 			console.error("Failed to load user data:", error);
@@ -89,7 +130,10 @@ export function LibraryApp() {
 		}
 	};
 
-	const calculateStats = (books: UserBookWithBook[]) => {
+	const calculateStats = (
+		books: UserBookWithBook[],
+		wishlistItems?: WishlistItemWithBook[]
+	) => {
 		const totalBooks = books.length;
 		const booksRead = books.filter(
 			(book) => book.status === ("completed" as BookStatus)
@@ -113,6 +157,8 @@ export function LibraryApp() {
 			0
 		);
 
+		const wishlistCount = wishlistItems ? wishlistItems.length : wishlist.length;
+
 		setStats({
 			totalBooks,
 			booksRead,
@@ -120,7 +166,7 @@ export function LibraryApp() {
 			booksWantToRead,
 			averageRating: Number(averageRating.toFixed(1)),
 			totalPages,
-			wishlistCount: wishlist.length,
+			wishlistCount,
 		});
 	};
 
@@ -264,106 +310,27 @@ export function LibraryApp() {
 		}
 	};
 
-	if (isLoading) {
-		return (
-			<div className="flex items-center justify-center h-64">
-				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-					<p className="mt-4 text-gray-600">データを読み込んでいます...</p>
-				</div>
-			</div>
-		);
-	}
+	const value: LibraryContextType = {
+		// State
+		myBooks,
+		wishlist,
+		searchResults,
+		isLoading,
+		isSearching,
+		stats,
+
+		// Actions
+		handleSearch,
+		handleAddToLibrary,
+		handleStatusChange,
+		handleRemoveBook,
+		handleWishlistPriorityChange,
+		handleMoveToLibrary,
+		handleRemoveFromWishlist,
+		loadUserData,
+	};
 
 	return (
-		<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-			<OfflineNotice />
-
-			<div className="space-y-6">
-				{/* Simple Tab Navigation */}
-				<div className="flex space-x-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-					<button
-						type="button"
-						onClick={() => setActiveTab("dashboard")}
-						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-							activeTab === "dashboard"
-								? "bg-white dark:bg-gray-700 shadow text-gray-900 dark:text-white"
-								: "hover:bg-white/50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
-						}`}
-					>
-						📊 ダッシュボード
-					</button>
-					<button
-						type="button"
-						onClick={() => setActiveTab("search")}
-						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-							activeTab === "search"
-								? "bg-white dark:bg-gray-700 shadow text-gray-900 dark:text-white"
-								: "hover:bg-white/50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
-						}`}
-					>
-						🔍 書籍検索
-					</button>
-					<button
-						type="button"
-						onClick={() => setActiveTab("library")}
-						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-							activeTab === "library"
-								? "bg-white dark:bg-gray-700 shadow text-gray-900 dark:text-white"
-								: "hover:bg-white/50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
-						}`}
-					>
-						📚 マイライブラリ
-					</button>
-					<button
-						type="button"
-						onClick={() => setActiveTab("wishlist")}
-						className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-							activeTab === "wishlist"
-								? "bg-white dark:bg-gray-700 shadow text-gray-900 dark:text-white"
-								: "hover:bg-white/50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300"
-						}`}
-					>
-						💝 ウィッシュリスト
-					</button>
-				</div>
-
-				{/* Dashboard Tab */}
-				{activeTab === "dashboard" && (
-					<Dashboard myBooks={myBooks} stats={stats} />
-				)}
-
-				{/* Search Tab */}
-				{activeTab === "search" && (
-					<Search
-						searchResults={searchResults}
-						isSearching={isSearching}
-						onSearch={handleSearch}
-						onAddToLibrary={handleAddToLibrary}
-					/>
-				)}
-
-				{/* Library Tab */}
-				{activeTab === "library" && (
-					<Library
-						myBooks={myBooks}
-						onStatusChange={handleStatusChange}
-						onRemove={handleRemoveBook}
-						onSearchClick={() => setActiveTab("search")}
-					/>
-				)}
-
-				{/* Wishlist Tab */}
-				{activeTab === "wishlist" && (
-					<Wishlist
-						wishlist={wishlist}
-						onPriorityChange={handleWishlistPriorityChange}
-						onMoveToLibrary={handleMoveToLibrary}
-						onRemove={handleRemoveFromWishlist}
-						onSearchClick={() => setActiveTab("search")}
-					/>
-				)}
-			</div>
-		</div>
+		<LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>
 	);
 }

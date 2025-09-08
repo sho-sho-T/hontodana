@@ -112,9 +112,7 @@ export function Search({
 											</Button>
 											<Button
 												size="sm"
-												onClick={() =>
-													onAddToLibrary(book, "completed" as BookStatus)
-												}
+												onClick={() => onAddToLibrary(book, "z" as BookStatus)}
 												variant="outline"
 											>
 												読了
