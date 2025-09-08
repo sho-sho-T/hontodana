@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { StatsSummaryCard } from "@/components/dashboard/StatsSummaryCard";
 import {
 	Card,
@@ -90,12 +89,10 @@ export function Dashboard({ myBooks, stats }: DashboardProps) {
 					<CardContent>
 						{myBooks.slice(0, 3).map((book) => (
 							<div key={book.id} className="flex items-center space-x-3 py-2">
-								<Image
+								<img
 									src={book.book.thumbnailUrl || "/images/book-placeholder.png"}
 									alt={book.book.title}
-									width={96}
-									height={96}
-									unoptimized // 外部画像でNext.jsの画像最適化と干渉しているため、Next.jsの画像最適化を無効
+									className="w-24 h-36 object-cover rounded"
 								/>
 								<div className="flex-1 min-w-0">
 									<p className="text-sm font-medium truncate">

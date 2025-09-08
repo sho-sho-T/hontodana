@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { SearchForm } from "@/components/search/SearchForm";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,12 +66,10 @@ export function Search({
 							<Card key={book.id}>
 								<CardContent className="p-4">
 									<div className="flex gap-4">
-										<Image
+										<img
 											src={book.thumbnail || "/images/book-placeholder.png"}
 											alt={book.title}
-											width={96}
-											height={96}
-											unoptimized // 外部画像でNext.jsの画像最適化と干渉しているため、Next.jsの画像最適化を無効
+											className="w-24 h-36 object-cover rounded"
 										/>
 										<div className="flex-1">
 											<h4 className="font-semibold text-lg">{book.title}</h4>

@@ -4,7 +4,6 @@
  * 書籍カードコンポーネント（グリッド表示用）
  */
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { StarRatingDisplay } from "@/components/rating/StarRating";
@@ -72,14 +71,11 @@ export function BookCard({ book, onStatusChange, onRemove }: BookCardProps) {
 		>
 			{/* 書影 */}
 			<div className={cn(CARD_STYLES.imageContainer, "mobile-image-size")}>
-				<Image
+				<img
 					src={thumbnailSrc}
 					alt={`${book.book.title} の書影`}
-					fill
-					className="object-cover"
 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-					priority={false}
-					unoptimized // 外部画像でNext.jsの画像最適化と干渉しているため、Next.jsの画像最適化を無効
+					className="object-cover"
 				/>
 			</div>
 

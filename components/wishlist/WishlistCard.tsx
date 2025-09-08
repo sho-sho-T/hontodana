@@ -4,7 +4,6 @@
  * ウィッシュリストカードコンポーネント
  */
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import type { WishlistItemWithBook } from "@/lib/models/wishlist";
@@ -74,13 +73,11 @@ export function WishlistCard({
 		>
 			{/* 書影 */}
 			<div className="relative h-48 md:h-32 md:w-24 bg-gray-100 flex-shrink-0">
-				<Image
+				<img
 					src={thumbnailSrc}
 					alt={`${item.book.title} の書影`}
-					fill
-					className="object-cover"
 					sizes="(max-width: 768px) 100vw, 96px"
-					unoptimized // 外部画像でNext.jsの画像最適化と干渉しているため、Next.jsの画像最適化を無効
+					className="object-cover"
 				/>
 			</div>
 
