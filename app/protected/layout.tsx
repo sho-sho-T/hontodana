@@ -3,6 +3,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { createClient } from "@/lib/supabase/server";
 import { Navigation } from "./components/Navigation";
 import { LibraryProvider } from "./components/LibraryProvider";
+import Link from "next/link";
 
 export default async function ProtectedLayout({
 	children,
@@ -31,7 +32,15 @@ export default async function ProtectedLayout({
 									ユーザー: <span className="font-medium">{data.user.email}</span>
 								</p>
 							</div>
-							<LogoutButton />
+							<div className="flex items-center gap-4">
+								<Link
+									href="/profile"
+									className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+								>
+									👤 プロフィール
+								</Link>
+								<LogoutButton />
+							</div>
 						</div>
 					</div>
 				</header>
