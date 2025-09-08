@@ -133,7 +133,7 @@ export async function addBookToLibrary(
 			return userBook;
 		});
 
-		revalidatePath("/library");
+		revalidatePath("/protected");
 		return result;
 	} catch (error) {
 		return errorToResponse(error);
@@ -184,7 +184,7 @@ export async function updateBookStatus(
 			},
 		});
 
-		revalidatePath("/library");
+		revalidatePath("/protected");
 		return userBook;
 	} catch (error) {
 		return errorToResponse(error);
@@ -212,7 +212,7 @@ export async function removeBookFromLibrary(
 			},
 		});
 
-		revalidatePath("/library");
+		revalidatePath("/protected");
 		return { success: true };
 	} catch (error) {
 		return errorToResponse(error);
