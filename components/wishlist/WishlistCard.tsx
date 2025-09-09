@@ -29,7 +29,7 @@ export function WishlistCard({
 	}
 
 	const handleCardClick = () => {
-		router.push(`/books/${item.bookId}`);
+		router.push(`/protected/books/${item.bookId}`);
 	};
 
 	const handlePriorityChange = (e: React.MouseEvent | React.KeyboardEvent) => {
