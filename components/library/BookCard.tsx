@@ -33,7 +33,7 @@ export function BookCard({ book, onStatusChange, onRemove }: BookCardProps) {
 	const router = useRouter();
 
 	const handleCardClick = () => {
-		router.push(`/library/books/${book.id}`);
+		router.push(`/protected/books/${book.book.id}`);
 	};
 
 	const handleStatusChange = (e: React.MouseEvent) => {
