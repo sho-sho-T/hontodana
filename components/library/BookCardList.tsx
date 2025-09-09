@@ -8,6 +8,11 @@ interface BookCardListProps {
 	viewMode?: "grid" | "list";
 	onStatusChange?: (bookId: string, status: BookStatus) => Promise<void> | void;
 	onRemove?: (bookId: string) => Promise<void> | void;
+	onProgressUpdate?: (
+		userBookId: string,
+		currentPage: number,
+		sessionNotes?: string
+	) => Promise<void>;
 }
 
 export function BookCardList({
@@ -15,6 +20,7 @@ export function BookCardList({
 	viewMode = "grid",
 	onStatusChange,
 	onRemove,
+	onProgressUpdate,
 }: BookCardListProps) {
 	const handleStatusChange = async (bookId: string, status: BookStatus) => {
 		if (onStatusChange) {
@@ -32,6 +38,16 @@ export function BookCardList({
 		}
 	};
 
+	const handleProgressUpdate = async (
+		userBookId: string,
+		currentPage: number,
+		sessionNotes?: string
+	) => {
+		if (onProgressUpdate) {
+			await onProgressUpdate(userBookId, currentPage, sessionNotes);
+		}
+	};
+
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{books.map((book) => (
@@ -41,6 +57,7 @@ export function BookCardList({
 					viewMode={viewMode}
 					onStatusChange={handleStatusChange}
 					onRemove={handleRemove}
+					onProgressUpdate={handleProgressUpdate}
 				/>
 			))}
 		</div>
