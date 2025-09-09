@@ -100,12 +100,7 @@ export function WishlistCard({
 
 				{/* 優先度 */}
 				<div className="flex items-center gap-2">
-					<span
-						className="text-lg"
-						aria-label={`優先度: ${priorityDisplay.label}`}
-					>
-						{priorityDisplay.icon}
-					</span>
+					<span className="text-lg">{priorityDisplay.icon}</span>
 					<span className="text-sm font-medium">{priorityDisplay.label}</span>
 				</div>
 
