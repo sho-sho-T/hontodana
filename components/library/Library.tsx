@@ -16,6 +16,7 @@ interface LibraryProps {
 	onStatusChange: (bookId: string, newStatus: BookStatus) => Promise<void>;
 	onRemove: (bookId: string) => Promise<void>;
 	onSearchClick: () => void;
+	onProgressUpdate?: (userBookId: string, currentPage: number, sessionNotes?: string) => Promise<void>;
 }
 
 export function Library({
@@ -23,6 +24,7 @@ export function Library({
 	onStatusChange,
 	onRemove,
 	onSearchClick,
+	onProgressUpdate,
 }: LibraryProps) {
 	return (
 		<div className="space-y-6">
@@ -39,6 +41,7 @@ export function Library({
 							books={myBooks}
 							onStatusChange={onStatusChange}
 							onRemove={onRemove}
+							onProgressUpdate={onProgressUpdate}
 						/>
 					) : (
 						<div className="text-center py-12">
