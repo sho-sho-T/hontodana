@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import type React from "react";
 import type { UserBookWithBook } from "@/lib/models/book";
 import { Button } from "../ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { HighlightedText } from "./HighlightedText";
 
 interface SearchResultsProps {
@@ -137,11 +138,6 @@ function SearchBookCard({
 		router.push(`/library/books/${book.id}`);
 	};
 
-	const handleStatusChange = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		onStatusChange(book.id, "completed"); // ダミー実装
-	};
-
 	const handleRemove = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		onRemove(book.id);
@@ -151,6 +147,26 @@ function SearchBookCard({
 	const progressPercentage = book.book.pageCount
 		? (book.currentPage / book.book.pageCount) * 100
 		: 0;
+
+	// ステータス表示用のマッピング
+	const getStatusLabel = (status: string) => {
+		switch (status) {
+			case "reading":
+				return "読書中";
+			case "completed":
+				return "読了";
+			case "want_to_read":
+				return "読みたい";
+			case "paused":
+				return "中断中";
+			case "abandoned":
+				return "断念";
+			case "reference":
+				return "参考書";
+			default:
+				return status;
+		}
+	};
 
 	return (
 		<Button
@@ -202,13 +218,7 @@ function SearchBookCard({
 				{/* ステータスバッジ */}
 				<div className="flex items-center justify-between">
 					<span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-						{book.status === "reading"
-							? "読書中"
-							: book.status === "completed"
-								? "読了"
-								: book.status === "want_to_read"
-									? "読みたい"
-									: book.status}
+						{getStatusLabel(book.status)}
 					</span>
 				</div>
 
@@ -228,14 +238,29 @@ function SearchBookCard({
 
 				{/* 操作ボタン */}
 				<div className="flex gap-2 pt-2">
-					<button
-						type="button"
-						onClick={handleStatusChange}
-						className="flex-1 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
-						aria-label="ステータス変更"
-					>
-						ステータス変更
-					</button>
+					<div className="flex-1">
+						<Select
+							value={book.status}
+							onValueChange={(value) => {
+								onStatusChange(book.id, value as any);
+							}}
+						>
+							<SelectTrigger 
+								className="flex-1 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
+								onClick={(e) => e.stopPropagation()}
+							>
+								<SelectValue placeholder="ステータス変更" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="want_to_read">読みたい</SelectItem>
+								<SelectItem value="reading">読書中</SelectItem>
+								<SelectItem value="completed">読了</SelectItem>
+								<SelectItem value="paused">中断中</SelectItem>
+								<SelectItem value="abandoned">断念</SelectItem>
+								<SelectItem value="reference">参考書</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 					<button
 						type="button"
 						onClick={handleRemove}

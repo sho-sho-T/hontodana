@@ -6,6 +6,7 @@
 
 import { useRouter } from "next/navigation";
 import type React from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { WishlistItemWithBook } from "@/lib/models/wishlist";
 import { getPriorityDisplay } from "@/lib/utils/wishlist-utils";
 
@@ -30,22 +31,6 @@ export function WishlistCard({
 
 	const handleCardClick = () => {
 		router.push(`/protected/books/${item.bookId}`);
-	};
-
-	const handlePriorityChange = (e: React.MouseEvent | React.KeyboardEvent) => {
-		e.stopPropagation();
-		if (onPriorityChange) {
-			// 優先度を一段階上げる（簡易版）
-			const nextPriority = getNextPriority(item.priority);
-			onPriorityChange(item.id, nextPriority);
-		}
-	};
-
-	const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
-		if (e.key === "Enter" || e.key === " ") {
-			e.preventDefault();
-			action();
-		}
 	};
 
 	const handleRemove = (e: React.MouseEvent) => {
@@ -118,14 +103,29 @@ export function WishlistCard({
 
 				{/* 操作ボタン */}
 				<div className="flex gap-2 pt-2 flex-wrap">
-					<button
-						onClick={handlePriorityChange}
-						onKeyDown={(e) => handleKeyDown(e, () => handlePriorityChange(e))}
-						className="flex-1 min-w-0 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
-						aria-label="優先度変更"
-					>
-						優先度変更
-					</button>
+					<div className="flex-1 min-w-0">
+						<Select
+							value={item.priority}
+							onValueChange={(value) => {
+								if (onPriorityChange) {
+									onPriorityChange(item.id, value);
+								}
+							}}
+						>
+							<SelectTrigger 
+								className="flex-1 min-w-0 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
+								onClick={(e) => e.stopPropagation()}
+							>
+								<SelectValue placeholder="優先度変更" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="low">🔵 低</SelectItem>
+								<SelectItem value="medium">🟡 中</SelectItem>
+								<SelectItem value="high">🟠 高</SelectItem>
+								<SelectItem value="urgent">🔴 緊急</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 					<button
 						onClick={handleMoveToLibrary}
 						className="flex-1 min-w-0 px-3 py-2 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors"
