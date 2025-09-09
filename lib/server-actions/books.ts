@@ -133,7 +133,7 @@ export async function addBookToLibrary(
 			return userBook;
 		});
 
-		revalidatePath("/protected");
+		revalidatePath("/protected/library");
 		return result;
 	} catch (error) {
 		return errorToResponse(error);
@@ -184,7 +184,7 @@ export async function updateBookStatus(
 			},
 		});
 
-		revalidatePath("/protected");
+		revalidatePath("/protected/library");
 		return userBook;
 	} catch (error) {
 		return errorToResponse(error);
@@ -212,7 +212,7 @@ export async function removeBookFromLibrary(
 			},
 		});
 
-		revalidatePath("/protected");
+		revalidatePath("/protected/library");
 		return { success: true };
 	} catch (error) {
 		return errorToResponse(error);
@@ -297,12 +297,14 @@ export async function getUserBook(
 /**
  * 書籍詳細を取得（BooksテーブルのIDから、UserBookまたはWishlistItemを検索）
  */
-export async function getBookDetails(bookId: string): Promise<ServerActionResult<{
-	book: any,
-	userBook?: UserBookWithBook,
-	wishlistItem?: any,
-	type: 'userBook' | 'wishlistItem' | 'book'
-}>> {
+export async function getBookDetails(bookId: string): Promise<
+	ServerActionResult<{
+		book: any;
+		userBook?: UserBookWithBook;
+		wishlistItem?: any;
+		type: "userBook" | "wishlistItem" | "book";
+	}>
+> {
 	try {
 		const userId = await getAuthenticatedUserId();
 		if (!userId) {
@@ -326,7 +328,7 @@ export async function getBookDetails(bookId: string): Promise<ServerActionResult
 			return {
 				book: userBook.book,
 				userBook,
-				type: 'userBook'
+				type: "userBook",
 			};
 		}
 
@@ -345,7 +347,7 @@ export async function getBookDetails(bookId: string): Promise<ServerActionResult
 			return {
 				book: wishlistItem.book,
 				wishlistItem,
-				type: 'wishlistItem'
+				type: "wishlistItem",
 			};
 		}
 
@@ -362,7 +364,7 @@ export async function getBookDetails(bookId: string): Promise<ServerActionResult
 
 		return {
 			book,
-			type: 'book'
+			type: "book",
 		};
 	} catch (error) {
 		return errorToResponse(error);

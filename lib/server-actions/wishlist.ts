@@ -5,27 +5,26 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
-import {
-	validateWishlistInput,
-	isValidPriority,
-} from "@/lib/utils/wishlist-utils";
 import {
 	AuthenticationError,
 	ValidationError as BookValidationError,
-	DuplicateError,
 	errorToResponse,
 } from "@/lib/errors/book-errors";
 import type {
 	AddToWishlistInput,
-	UpdatePriorityInput,
-	RemoveFromWishlistInput,
-	MoveToLibraryInput,
 	GetWishlistInput,
+	MoveToLibraryInput,
+	RemoveFromWishlistInput,
+	UpdatePriorityInput,
 	WishlistActionResult,
 	WishlistItemWithBook,
 } from "@/lib/models/wishlist";
+import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
+import {
+	isValidPriority,
+	validateWishlistInput,
+} from "@/lib/utils/wishlist-utils";
 
 /**
  * 認証されたユーザーIDを取得
@@ -122,7 +121,7 @@ export async function addToWishlist(
 			},
 		});
 
-		revalidatePath("/wishlist");
+		revalidatePath("protected/wishlist");
 
 		return {
 			success: true,
@@ -313,7 +312,7 @@ export async function updateWishlistPriority(
 			},
 		});
 
-		revalidatePath("/wishlist");
+		revalidatePath("protected/wishlist");
 
 		return {
 			success: true,
@@ -352,7 +351,7 @@ export async function removeFromWishlist(
 			throw new BookValidationError("アクセス権限がありません");
 		}
 
-		revalidatePath("/wishlist");
+		revalidatePath("protected/wishlist");
 
 		return {
 			success: true,
