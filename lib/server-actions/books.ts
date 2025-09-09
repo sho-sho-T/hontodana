@@ -261,6 +261,115 @@ async function getUserBooksUncached(
 }
 
 /**
+ * ユーザーの単一書籍を取得（UserBookテーブルのIDから）
+ */
+export async function getUserBook(
+	userBookId: string
+): Promise<ServerActionResult<UserBookWithBook>> {
+	try {
+		const userId = await getAuthenticatedUserId();
+		if (!userId) {
+			throw new AuthenticationError();
+		}
+
+		validateUserId(userId);
+
+		const userBook = await prisma.userBook.findUnique({
+			where: {
+				id: userBookId,
+				userId, // ユーザー認可チェック
+			},
+			include: {
+				book: true,
+			},
+		});
+
+		if (!userBook) {
+			throw new BookValidationError("書籍が見つかりません");
+		}
+
+		return userBook;
+	} catch (error) {
+		return errorToResponse(error);
+	}
+}
+
+/**
+ * 書籍詳細を取得（BooksテーブルのIDから、UserBookまたはWishlistItemを検索）
+ */
+export async function getBookDetails(bookId: string): Promise<ServerActionResult<{
+	book: any,
+	userBook?: UserBookWithBook,
+	wishlistItem?: any,
+	type: 'userBook' | 'wishlistItem' | 'book'
+}>> {
+	try {
+		const userId = await getAuthenticatedUserId();
+		if (!userId) {
+			throw new AuthenticationError();
+		}
+
+		validateUserId(userId);
+
+		// まずUserBookテーブルから検索
+		const userBook = await prisma.userBook.findFirst({
+			where: {
+				bookId,
+				userId,
+			},
+			include: {
+				book: true,
+			},
+		});
+
+		if (userBook) {
+			return {
+				book: userBook.book,
+				userBook,
+				type: 'userBook'
+			};
+		}
+
+		// UserBookになければWishlistItemテーブルから検索
+		const wishlistItem = await prisma.wishlistItem.findFirst({
+			where: {
+				bookId,
+				userId,
+			},
+			include: {
+				book: true,
+			},
+		});
+
+		if (wishlistItem) {
+			return {
+				book: wishlistItem.book,
+				wishlistItem,
+				type: 'wishlistItem'
+			};
+		}
+
+		// どちらにもなければBooksテーブルから直接取得
+		const book = await prisma.book.findUnique({
+			where: {
+				id: bookId,
+			},
+		});
+
+		if (!book) {
+			throw new BookValidationError("書籍が見つかりません");
+		}
+
+		return {
+			book,
+			type: 'book'
+		};
+	} catch (error) {
+		return errorToResponse(error);
+	}
+}
+
+/**
  * ユーザーの書籍リストを取得（キャッシュ版）
  */
 export async function getUserBooks(
