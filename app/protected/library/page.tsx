@@ -6,7 +6,7 @@ import { useLibrary } from "../components/LibraryProvider";
 import { useRouter } from "next/navigation";
 
 export default function LibraryPage() {
-	const { myBooks, handleStatusChange, handleRemoveBook, isLoading } =
+	const { myBooks, handleStatusChange, handleRemoveBook, handleProgressUpdate, isLoading } =
 		useLibrary();
 	const router = useRouter();
 
@@ -28,6 +28,7 @@ export default function LibraryPage() {
 				myBooks={myBooks}
 				onStatusChange={handleStatusChange}
 				onRemove={handleRemoveBook}
+				onProgressUpdate={handleProgressUpdate}
 				onSearchClick={() => router.push("/protected/search")}
 			/>
 		</div>
