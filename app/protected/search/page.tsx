@@ -5,7 +5,7 @@ import { Search } from "@/components/library/Search";
 import { useLibrary } from "../components/LibraryProvider";
 
 export default function SearchPage() {
-	const { searchResults, isSearching, handleSearch, handleAddToLibrary } =
+	const { searchResults, isSearching, handleSearch, handleAddToLibrary, handleAddToWishlist } =
 		useLibrary();
 
 	return (
@@ -16,6 +16,7 @@ export default function SearchPage() {
 				isSearching={isSearching}
 				onSearch={handleSearch}
 				onAddToLibrary={handleAddToLibrary}
+				onAddToWishlist={handleAddToWishlist}
 			/>
 		</div>
 	);

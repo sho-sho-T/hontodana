@@ -10,6 +10,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import type { BookStatus } from "@/lib/models/book";
+import type { WishlistPriority } from "@/lib/models/wishlist";
 
 interface SearchResult {
 	id: string;
@@ -27,6 +28,7 @@ interface SearchProps {
 	isSearching: boolean;
 	onSearch: (params: { query: string; filters: any }) => Promise<void>;
 	onAddToLibrary: (book: SearchResult, status?: BookStatus) => Promise<void>;
+	onAddToWishlist?: (book: SearchResult, priority?: WishlistPriority) => Promise<void>;
 }
 
 export function Search({
@@ -34,6 +36,7 @@ export function Search({
 	isSearching,
 	onSearch,
 	onAddToLibrary,
+	onAddToWishlist,
 }: SearchProps) {
 	return (
 		<div className="space-y-6">
@@ -93,6 +96,19 @@ export function Search({
 											</div>
 										</div>
 										<div className="flex flex-col gap-2">
+											{/* ウィッシュリストに追加 */}
+											{onAddToWishlist && (
+												<Button
+													size="sm"
+													onClick={() => onAddToWishlist(book, "medium")}
+													variant="outline"
+													className="bg-yellow-50 border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+												>
+													💝 ウィッシュリスト
+												</Button>
+											)}
+											
+											{/* ライブラリに追加 */}
 											<Button
 												size="sm"
 												onClick={() =>
@@ -112,7 +128,7 @@ export function Search({
 											</Button>
 											<Button
 												size="sm"
-												onClick={() => onAddToLibrary(book, "z" as BookStatus)}
+												onClick={() => onAddToLibrary(book, "completed" as BookStatus)}
 												variant="outline"
 											>
 												読了

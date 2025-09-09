@@ -127,6 +127,130 @@ export async function addToWishlist(
 }
 
 /**
+ * Google Books検索結果から直接ウィッシュリストに書籍を追加する
+ */
+export async function addBookToWishlist(
+  googleBookData: import('@/lib/models/book').GoogleBooksApiResponse,
+  priority: import('@/lib/models/wishlist').WishlistPriority = 'medium'
+): Promise<WishlistActionResult<WishlistItemWithBook>> {
+  try {
+    // 認証チェック
+    const userId = await getAuthenticatedUserId()
+    if (!userId) {
+      throw new AuthenticationError()
+    }
+
+    // Google Books データの正規化
+    const { normalizeBookData } = await import('@/lib/utils/book-normalizer')
+    const normalizedData = normalizeBookData(googleBookData)
+    
+    // バリデーション
+    if (!normalizedData.title) {
+      throw new BookValidationError('書籍タイトルが必要です')
+    }
+
+    // トランザクション内で書籍の作成/取得とウィッシュリストアイテムの作成を行う
+    const result = await prisma.$transaction(async (tx) => {
+      // 既存の書籍をチェック/作成
+      let book = await tx.book.findUnique({
+        where: { googleBooksId: normalizedData.googleBooksId },
+      })
+
+      if (!book) {
+        book = await tx.book.create({
+          data: {
+            googleBooksId: normalizedData.googleBooksId,
+            title: normalizedData.title,
+            authors: normalizedData.authors,
+            publisher: normalizedData.publisher,
+            publishedDate: normalizedData.publishedDate,
+            isbn10: normalizedData.isbn10,
+            isbn13: normalizedData.isbn13,
+            pageCount: normalizedData.pageCount,
+            language: normalizedData.language,
+            description: normalizedData.description,
+            thumbnailUrl: normalizedData.thumbnailUrl,
+            previewLink: normalizedData.previewLink,
+            infoLink: normalizedData.infoLink,
+            categories: normalizedData.categories,
+            averageRating: normalizedData.averageRating,
+            ratingsCount: normalizedData.ratingsCount,
+          },
+        })
+      }
+
+      // 重複チェック: 既に本棚にある場合
+      const existingUserBook = await tx.userBook.findFirst({
+        where: {
+          userId,
+          bookId: book.id
+        }
+      })
+      
+      if (existingUserBook) {
+        throw new BookValidationError('この書籍は既に本棚に登録されています')
+      }
+
+      // 重複チェック: 既にウィッシュリストにある場合
+      const existingWishlistItem = await tx.wishlistItem.findFirst({
+        where: {
+          userId,
+          bookId: book.id
+        }
+      })
+      
+      if (existingWishlistItem) {
+        throw new BookValidationError('この書籍は既にウィッシュリストに登録されています')
+      }
+
+      // ウィッシュリストアイテム作成
+      const wishlistItem = await tx.wishlistItem.create({
+        data: {
+          userId,
+          bookId: book.id,
+          priority: priority,
+          reason: null,
+          targetDate: null,
+          priceAlert: null
+        },
+        include: {
+          book: {
+            select: {
+              id: true,
+              title: true,
+              authors: true,
+              publisher: true,
+              thumbnailUrl: true,
+              pageCount: true,
+              description: true,
+              categories: true
+            }
+          }
+        }
+      })
+
+      return wishlistItem
+    })
+
+    revalidatePath('/protected/wishlist')
+    revalidatePath('/protected')
+
+    return {
+      success: true,
+      data: result
+    }
+
+  } catch (error) {
+    console.error('Add to wishlist failed:', error)
+    const errorResponse = errorToResponse(error)
+    return {
+      success: false,
+      error: errorResponse.error
+    }
+  }
+}
+
+/**
  * ウィッシュリストアイテムの優先度を更新
  */
 export async function updateWishlistPriority(

@@ -13,13 +13,15 @@ import {
 	updateWishlistPriority,
 	removeFromWishlist,
 	moveToLibrary,
+	addToWishlist,
+	addBookToWishlist,
 } from "@/lib/server-actions/wishlist";
 import type {
 	UserBookWithBook,
 	BookStatus,
 	GoogleBooksApiResponse,
 } from "@/lib/models/book";
-import type { WishlistItemWithBook } from "@/lib/models/wishlist";
+import type { WishlistItemWithBook, WishlistPriority } from "@/lib/models/wishlist";
 
 interface SearchResult {
 	id: string;
@@ -56,6 +58,10 @@ interface LibraryContextType {
 	handleAddToLibrary: (
 		book: SearchResult,
 		status?: BookStatus
+	) => Promise<void>;
+	handleAddToWishlist: (
+		book: SearchResult,
+		priority?: WishlistPriority
 	) => Promise<void>;
 	handleStatusChange: (bookId: string, newStatus: BookStatus) => Promise<void>;
 	handleRemoveBook: (bookId: string) => Promise<void>;
@@ -106,6 +112,13 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
 		loadUserData();
 	}, []);
+
+	// Recalculate stats when data changes
+	useEffect(() => {
+		if (myBooks.length > 0 || wishlist.length > 0) {
+			calculateStats(myBooks, wishlist);
+		}
+	}, [myBooks, wishlist]);
 
 	const loadUserData = async () => {
 		setIsLoading(true);
@@ -310,6 +323,40 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 		}
 	};
 
+	const handleAddToWishlist = async (
+		book: SearchResult,
+		priority: WishlistPriority = "medium"
+	) => {
+		try {
+			// Convert SearchResult to GoogleBooksApiResponse format
+			const googleBookData: GoogleBooksApiResponse = {
+				id: book.id,
+				volumeInfo: {
+					title: book.title,
+					authors: book.authors,
+					publisher: book.publisher,
+					description: book.description,
+					pageCount: book.pageCount,
+					categories: book.categories,
+					imageLinks: book.thumbnail
+						? { thumbnail: book.thumbnail }
+						: undefined,
+				},
+			};
+
+			const result = await addBookToWishlist(googleBookData, priority);
+			if (result.success) {
+				await loadUserData(); // Refresh data
+				alert(`「${book.title}」をウィッシュリストに追加しました！`);
+			} else {
+				alert(result.error || "ウィッシュリストへの追加に失敗しました。");
+			}
+		} catch (error) {
+			console.error("Failed to add book to wishlist:", error);
+			alert("ウィッシュリストへの追加に失敗しました。");
+		}
+	};
+
 	const value: LibraryContextType = {
 		// State
 		myBooks,
@@ -322,6 +369,7 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 		// Actions
 		handleSearch,
 		handleAddToLibrary,
+		handleAddToWishlist,
 		handleStatusChange,
 		handleRemoveBook,
 		handleWishlistPriorityChange,
