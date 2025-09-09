@@ -8,6 +8,8 @@ import {
 	updateBookStatus,
 	removeBookFromLibrary,
 } from "@/lib/server-actions/books";
+import { updateReadingProgress } from "@/lib/server-actions/reading-progress";
+import type { UserBookId } from "@/lib/models/reading-progress";
 import {
 	getUserWishlist,
 	updateWishlistPriority,
@@ -65,6 +67,7 @@ interface LibraryContextType {
 	) => Promise<void>;
 	handleStatusChange: (bookId: string, newStatus: BookStatus) => Promise<void>;
 	handleRemoveBook: (bookId: string) => Promise<void>;
+	handleProgressUpdate: (userBookId: string, currentPage: number, sessionNotes?: string) => Promise<void>;
 	handleWishlistPriorityChange: (
 		id: string,
 		newPriority: string
@@ -323,6 +326,29 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 		}
 	};
 
+	const handleProgressUpdate = async (
+		userBookId: string,
+		currentPage: number,
+		sessionNotes?: string
+	) => {
+		try {
+			const result = await updateReadingProgress({
+				userBookId: userBookId as UserBookId,
+				currentPage,
+				sessionNotes,
+			});
+
+			if (result.success) {
+				await loadUserData(); // Refresh data
+			} else {
+				throw new Error(result.error || "進捗更新に失敗しました");
+			}
+		} catch (error) {
+			console.error("Failed to update reading progress:", error);
+			throw error; // Re-throw to let the dialog handle the error display
+		}
+	};
+
 	const handleAddToWishlist = async (
 		book: SearchResult,
 		priority: WishlistPriority = "medium"
@@ -375,6 +401,7 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 		handleWishlistPriorityChange,
 		handleMoveToLibrary,
 		handleRemoveFromWishlist,
+		handleProgressUpdate,
 		loadUserData,
 	};
 
