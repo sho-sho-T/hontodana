@@ -7,6 +7,13 @@ on:
   pull_request: # PR作成・更新時
     branches: [ main ]
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: read
+  actions: read
+
 # env: 環境変数の定義
 # ワークフロー全体で使用できるグローバル変数
 env:
