@@ -9,7 +9,7 @@ import { prisma } from '@/lib/prisma'
 import { createTestUserBook, createTestUser } from '@/__tests__/fixtures/bookData'
 
 describe('useReadingGoals', () => {
-  const testUserId = 'test-user-reading-goals'
+  const testUserId = '550e8400-e29b-41d4-a716-446655440001'
 
   beforeEach(async () => {
     // テストデータのクリーンアップ
@@ -59,7 +59,7 @@ describe('useReadingGoals', () => {
 
     test('目標進捗の計算', async () => {
       // 準備: 年間50冊の目標を作成
-      const goal = await createTestReadingGoal({
+      const goal = await createTestReadingGoal(testUserId, {
         userId: testUserId,
         type: 'books_per_year',
         targetValue: 50,
@@ -115,7 +115,7 @@ describe('useReadingGoals', () => {
     })
 
     test('目標達成アラートの生成', async () => {
-      const goal = await createTestReadingGoal({
+      const goal = await createTestReadingGoal(testUserId, {
         userId: testUserId,
         type: 'pages_per_month',
         targetValue: 1000,
@@ -139,7 +139,7 @@ describe('useReadingGoals', () => {
     })
 
     test('目標の更新', async () => {
-      const goal = await createTestReadingGoal({
+      const goal = await createTestReadingGoal(testUserId, {
         userId: testUserId,
         type: 'books_per_year',
         targetValue: 50
@@ -156,7 +156,7 @@ describe('useReadingGoals', () => {
     })
 
     test('目標の削除', async () => {
-      const goal = await createTestReadingGoal({
+      const goal = await createTestReadingGoal(testUserId, {
         userId: testUserId,
         type: 'books_per_year',
         targetValue: 50
@@ -175,7 +175,7 @@ describe('useReadingGoals', () => {
   // TDD Red フェーズ: P1優先度テストケース - 目標進捗追跡
   describe('P1: 目標進捗追跡テスト', () => {
     test('年間書籍目標の進捗計算', async () => {
-      const goal = await createTestReadingGoal({
+      const goal = await createTestReadingGoal(testUserId, {
         userId: testUserId,
         type: 'books_per_year',
         targetValue: 50,
@@ -203,7 +203,7 @@ describe('useReadingGoals', () => {
     })
 
     test('月間ページ目標の進捗計算', async () => {
-      const goal = await createTestReadingGoal({
+      const goal = await createTestReadingGoal(testUserId, {
         userId: testUserId,
         type: 'pages_per_month',
         targetValue: 1000,
@@ -234,7 +234,7 @@ describe('useReadingGoals', () => {
     })
 
     test('目標期間終了後の処理', async () => {
-      const expiredGoal = await createTestReadingGoal({
+      const expiredGoal = await createTestReadingGoal(testUserId, {
         userId: testUserId,
         type: 'books_per_year',
         targetValue: 50,
@@ -313,10 +313,10 @@ describe('useReadingGoals', () => {
 })
 
 // テスト用読書目標作成ヘルパー関数
-const createTestReadingGoal = async (overrides = {}) => {
+const createTestReadingGoal = async (userId: string, overrides = {}) => {
   return await prisma.readingGoal.create({
     data: {
-      userId: testUserId,
+      userId,
       type: 'books_per_year',
       targetValue: 50,
       startDate: new Date('2024-01-01'),

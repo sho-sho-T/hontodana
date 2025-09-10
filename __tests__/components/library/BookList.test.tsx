@@ -61,19 +61,19 @@ describe("BookList - ソート機能", () => {
 	};
 
 	test("タイトル昇順ソートが正しく動作する", () => {
-		render(<BookList {...defaultProps} />);
+		render(<BookList {...defaultProps} sortBy="author" />);
 
-		const titleHeader = screen.getByRole("columnheader", { name: /タイトル/i });
-		fireEvent.click(titleHeader);
+		const titleButton = screen.getByRole("button", { name: /タイトルでソート/i });
+		fireEvent.click(titleButton);
 
 		expect(defaultProps.onSort).toHaveBeenCalledWith("title", "asc");
 	});
 
 	test("タイトル降順ソートが正しく動作する", () => {
-		render(<BookList {...defaultProps} sortOrder="desc" />);
+		render(<BookList {...defaultProps} sortBy="title" sortOrder="asc" />);
 
-		const titleHeader = screen.getByRole("columnheader", { name: /タイトル/i });
-		fireEvent.click(titleHeader);
+		const titleButton = screen.getByRole("button", { name: /タイトルでソート/i });
+		fireEvent.click(titleButton);
 
 		expect(defaultProps.onSort).toHaveBeenCalledWith("title", "desc");
 	});
@@ -81,8 +81,8 @@ describe("BookList - ソート機能", () => {
 	test("著者名ソートが正しく動作する", () => {
 		render(<BookList {...defaultProps} />);
 
-		const authorHeader = screen.getByRole("columnheader", { name: /著者/i });
-		fireEvent.click(authorHeader);
+		const authorButton = screen.getByRole("button", { name: /著者でソート/i });
+		fireEvent.click(authorButton);
 
 		expect(defaultProps.onSort).toHaveBeenCalledWith("author", "asc");
 	});
@@ -90,8 +90,8 @@ describe("BookList - ソート機能", () => {
 	test("追加日ソートが正しく動作する", () => {
 		render(<BookList {...defaultProps} />);
 
-		const addedHeader = screen.getByRole("columnheader", { name: /追加日/i });
-		fireEvent.click(addedHeader);
+		const addedButton = screen.getByRole("button", { name: /追加日でソート/i });
+		fireEvent.click(addedButton);
 
 		expect(defaultProps.onSort).toHaveBeenCalledWith("createdAt", "asc");
 	});
@@ -99,8 +99,8 @@ describe("BookList - ソート機能", () => {
 	test("更新日ソートが正しく動作する", () => {
 		render(<BookList {...defaultProps} />);
 
-		const updatedHeader = screen.getByRole("columnheader", { name: /更新日/i });
-		fireEvent.click(updatedHeader);
+		const updatedButton = screen.getByRole("button", { name: /更新日でソート/i });
+		fireEvent.click(updatedButton);
 
 		expect(defaultProps.onSort).toHaveBeenCalledWith("updatedAt", "asc");
 	});
@@ -119,10 +119,19 @@ describe("BookList - フィルタ表示", () => {
 	};
 
 	test("適用中のステータスフィルタが表示される", () => {
-		render(<BookList {...defaultProps} />);
+		const propsWithFilters = {
+			...defaultProps,
+			activeFilters: [
+				{ type: "status", value: "reading", label: "読書中" }
+			]
+		};
+		
+		render(<BookList {...propsWithFilters} />);
 
 		expect(screen.getByText("フィルタ:")).toBeInTheDocument();
-		expect(screen.getByText("読書中")).toBeInTheDocument();
+		// フィルタエリア内の読書中フィルターを特定
+		const filterArea = screen.getByText("フィルタ:").parentElement;
+		expect(filterArea).toHaveTextContent("読書中");
 	});
 
 	test("複数フィルタが同時に表示される", () => {
@@ -136,8 +145,10 @@ describe("BookList - フィルタ表示", () => {
 
 		render(<BookList {...propsWithMultipleFilters} />);
 
-		expect(screen.getByText("読書中")).toBeInTheDocument();
-		expect(screen.getByText("テスト著者1")).toBeInTheDocument();
+		// フィルタエリア内の複数フィルターを確認
+		const filterArea = screen.getByText("フィルタ:").parentElement;
+		expect(filterArea).toHaveTextContent("読書中");
+		expect(filterArea).toHaveTextContent("テスト著者1");
 	});
 
 	test("フィルタクリア機能が動作する", () => {

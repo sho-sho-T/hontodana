@@ -34,21 +34,21 @@ jest.mock('react-chartjs-2', () => ({
   ),
 }))
 
-const mockDistributionData = {
-  physical: 15,
-  kindle: 20,
-  epub: 8,
-  audiobook: 5,
-  other: 2
-}
+const mockDistributionData = [
+  { label: 'Physical', value: 15, color: '#3B82F6' },
+  { label: 'Kindle', value: 20, color: '#EF4444' },
+  { label: 'EPUB', value: 8, color: '#10B981' },
+  { label: 'Audiobook', value: 5, color: '#F59E0B' },
+  { label: 'Other', value: 2, color: '#8B5CF6' }
+]
 
-const mockStatusData = {
-  want_to_read: 10,
-  reading: 5,
-  completed: 25,
-  paused: 2,
-  abandoned: 1
-}
+const mockStatusData = [
+  { label: 'Want to Read', value: 10, color: '#6B7280' },
+  { label: 'Reading', value: 5, color: '#3B82F6' },
+  { label: 'Completed', value: 25, color: '#10B981' },
+  { label: 'Paused', value: 2, color: '#F59E0B' },
+  { label: 'Abandoned', value: 1, color: '#EF4444' }
+]
 
 describe('BookDistributionChart', () => {
   beforeEach(() => {
@@ -61,8 +61,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
-          dataType="bookType"
+          type="doughnut"
         />
       )
 
@@ -80,7 +79,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showCenterStats={true}
         />
       )
@@ -96,7 +95,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           colors={customColors}
         />
       )
@@ -112,7 +111,7 @@ describe('BookDistributionChart', () => {
       const { rerender } = render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
         />
       )
 
@@ -123,7 +122,7 @@ describe('BookDistributionChart', () => {
       rerender(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="bar"
+          type="bar"
         />
       )
 
@@ -136,7 +135,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="bar"
+          type="bar"
           showValues={true}
         />
       )
@@ -151,7 +150,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="bar"
+          type="bar"
           sortBy="value"
           sortOrder="desc"
         />
@@ -170,9 +169,8 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockStatusData}
-          chartType="doughnut"
-          dataType="status"
-        />
+          type="doughnut"
+                  />
       )
 
       expect(screen.getByText('読みたい')).toBeInTheDocument()
@@ -186,9 +184,8 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockStatusData}
-          chartType="doughnut"
-          dataType="status"
-          showProgress={true}
+          type="doughnut"
+                    showProgress={true}
         />
       )
 
@@ -204,9 +201,8 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockStatusData}
-          chartType="doughnut"
-          dataType="status"
-          showRecommendations={true}
+          type="doughnut"
+                    showRecommendations={true}
         />
       )
 
@@ -228,7 +224,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
         />
       )
 
@@ -244,7 +240,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showPercentage={true}
           percentagePrecision={1}
         />
@@ -257,7 +253,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showCount={true}
           showPercentage={true}
         />
@@ -270,7 +266,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showLabels={false}
         />
       )
@@ -292,7 +288,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showTypeSelector={true}
           onChartTypeChange={mockOnChartTypeChange}
         />
@@ -311,7 +307,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           onSegmentClick={mockOnSegmentClick}
         />
       )
@@ -329,7 +325,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showTooltip={true}
         />
       )
@@ -349,7 +345,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showTypeSelector={true}
         />
       )
@@ -369,7 +365,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           accessibleColors={true}
         />
       )
@@ -383,7 +379,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
         />
       )
 
@@ -397,7 +393,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           showDataTable={true}
         />
       )
@@ -416,7 +412,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           highContrast={true}
         />
       )
@@ -429,7 +425,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
         />
       )
 
@@ -448,7 +444,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={{}}
-          chartType="doughnut"
+          type="doughnut"
         />
       )
 
@@ -467,7 +463,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={invalidData as any}
-          chartType="doughnut"
+          type="doughnut"
         />
       )
 
@@ -486,7 +482,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={zeroData}
-          chartType="doughnut"
+          type="doughnut"
         />
       )
 
@@ -517,7 +513,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           title="私の蔵書分布"
         />
       )
@@ -529,7 +525,7 @@ describe('BookDistributionChart', () => {
       const { container } = render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           width={400}
           height={300}
         />
@@ -544,7 +540,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           animation={{
             duration: 2000,
             easing: 'easeInOutQuart'
@@ -560,7 +556,7 @@ describe('BookDistributionChart', () => {
       render(
         <BookDistributionChart
           data={mockDistributionData}
-          chartType="doughnut"
+          type="doughnut"
           legendPosition="bottom"
         />
       )

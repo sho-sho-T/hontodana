@@ -197,7 +197,7 @@ export function transformStatsForChart(
  */
 export function formatStatValue(
   value: number | null | undefined,
-  type: 'minutes' | 'pages' | 'percentage' | 'books' | 'speed' | 'days',
+  type: 'minutes' | 'pages' | 'percentage' | 'books' | 'speed' | 'days' | 'sessions',
   options: FormatOptions = {}
 ): string {
   // メモ化キーで簡単なケースはスキップ
@@ -231,6 +231,9 @@ export function formatStatValue(
         break
       case 'days':
         result = `${formatNumber(safeValue, 0)}日`
+        break
+      case 'sessions':
+        result = `${formatNumber(safeValue, 0)}セッション`
         break
       default:
         result = `${formatNumber(safeValue, precision)}`
@@ -586,6 +589,7 @@ function getUnitSuffix(type: string): string {
     case 'books': return '冊'
     case 'speed': return 'ページ/分'
     case 'days': return '日'
+    case 'sessions': return 'セッション'
     default: return ''
   }
 }

@@ -5,6 +5,12 @@
 import { BookStatus, BookType } from '@/lib/models/book'
 import type { GoogleBooksApiResponse } from '@/lib/models/book'
 
+// Next.js cache mocking
+jest.mock('next/cache', () => ({
+  revalidatePath: jest.fn(),
+  unstable_cache: jest.fn((fn) => fn) // cache関数をそのまま実行する
+}))
+
 // 認証関連のモック
 const mockGetUser = jest.fn()
 jest.mock('@/lib/supabase/server', () => ({
@@ -69,7 +75,7 @@ describe('addBookToLibrary', () => {
   })
 
   test('新しい書籍を正常にライブラリに追加できる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     const mockBook = { 
@@ -79,12 +85,12 @@ describe('addBookToLibrary', () => {
     }
     const mockUserBook = { 
       id: 'user-book-id', 
-      userId: 'test-user-id', 
+      userId: '550e8400-e29b-41d4-a716-446655440000', 
       bookId: 'book-id',
       book: mockBook
     }
     
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     prisma.$transaction.mockImplementation(async (callback) => {
       return callback({
@@ -114,7 +120,7 @@ describe('addBookToLibrary', () => {
   })
 
   test('重複書籍の追加でエラーになる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     const mockBook = { id: 'book-id' }
@@ -139,7 +145,7 @@ describe('addBookToLibrary', () => {
   })
 
   test('無効なGoogle Booksデータでエラーになる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const invalidData = {
       id: '',
@@ -152,7 +158,7 @@ describe('addBookToLibrary', () => {
   })
 
   test('無効なBookStatusでエラーになる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
 
     const result = await addBookToLibrary(mockGoogleBookData, 'invalid_status' as BookStatus)
     
@@ -166,7 +172,7 @@ describe('updateBookStatus', () => {
   })
 
   test('読書ステータスを正常に更新できる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     const mockUpdatedUserBook = {
@@ -191,7 +197,7 @@ describe('updateBookStatus', () => {
   })
 
   test('存在しない書籍でエラーになる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     prisma.userBook.update.mockRejectedValue(new Error('Record not found'))
@@ -208,7 +214,7 @@ describe('removeBookFromLibrary', () => {
   })
 
   test('書籍をライブラリから削除できる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     prisma.userBook.delete.mockResolvedValue({ id: 'deleted-id' })
@@ -227,7 +233,7 @@ describe('removeBookFromLibrary', () => {
   })
 
   test('存在しない書籍でエラーになる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     prisma.userBook.delete.mockRejectedValue(new Error('Record not found'))
@@ -244,7 +250,7 @@ describe('getUserBooks', () => {
   })
 
   test('ユーザーの全書籍を取得できる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     const mockUserBooks = [
@@ -260,7 +266,7 @@ describe('getUserBooks', () => {
   })
 
   test('ステータスでフィルタリングできる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
     
     const { prisma } = require('@/lib/generated/prisma')
     const mockFilteredBooks = [
@@ -283,7 +289,7 @@ describe('getUserBooks', () => {
   })
 
   test('無効なlimitでエラーになる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
 
     const result = await getUserBooks(undefined, 101) // 上限超過
     
@@ -291,7 +297,7 @@ describe('getUserBooks', () => {
   })
 
   test('負のoffsetでエラーになる', async () => {
-    mockAuth({ id: 'test-user-id' })
+    mockAuth({ id: '550e8400-e29b-41d4-a716-446655440000' })
 
     const result = await getUserBooks(undefined, 50, -1)
     

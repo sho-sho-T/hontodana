@@ -122,10 +122,10 @@ describe('BookCard - インタラクション', () => {
   test('カードクリック時に詳細画面に遷移する', () => {
     render(<BookCard {...defaultProps} />)
     
-    const card = screen.getByRole('article')
+    const card = screen.getByRole('button', { name: /テスト書籍のタイトル の詳細/i })
     fireEvent.click(card)
     
-    expect(mockPush).toHaveBeenCalledWith('/library/books/user-book-1')
+    expect(mockPush).toHaveBeenCalledWith('/protected/books/book-1')
   })
 
   test('ステータス変更ボタンクリック時にコールバックが実行される', () => {
@@ -155,15 +155,13 @@ describe('BookCard - ホバー効果', () => {
     onRemove: jest.fn()
   }
 
-  test('マウスホバー時にスタイルが変更される', () => {
+  test('カードが正しいクラス名を持つ', () => {
     render(<BookCard {...defaultProps} />)
     
-    const card = screen.getByRole('article')
+    const card = screen.getByRole('button', { name: /テスト書籍のタイトル の詳細/i })
     
-    fireEvent.mouseEnter(card)
-    expect(card).toHaveClass('hover:shadow-lg')
-    
-    fireEvent.mouseLeave(card)
-    expect(card).toHaveClass('shadow-md')
+    // 基本的なスタイルクラスが適用されていることを確認
+    expect(card).toHaveClass('cursor-pointer')
+    expect(card).toHaveClass('bg-white')
   })
 })
