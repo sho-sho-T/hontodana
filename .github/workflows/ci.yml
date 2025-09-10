@@ -1,0 +1,137 @@
+name: CI
+
+# on: ワークフローの実行トリガー
+on:
+  push: # 指定されたブランチにプッシュされた時
+    branches: [ main ]
+  pull_request: # PR作成・更新時
+    branches: [ main ]
+
+# env: 環境変数の定義
+# ワークフロー全体で使用できるグローバル変数
+env:
+  NODE_VERSION: "23"
+
+
+# ========================================
+# jobs: 実行するジョブの定義
+# 複数のジョブを定義可能
+# デフォルトでは並列実行、needsで依存関係を指定可能
+# ========================================
+jobs:
+  essential-checks: # 任意のジョブ名
+    # name: ジョブの表示名（GitHub UI上での名前）
+    name: Essential Checks
+    runs-on: ubuntu-latest
+
+    steps:
+# ========================================
+# Step 1: actions/checkout
+# 公式提供アクション（他の人が作った再利用可能な処理）
+# リポジトリのコードをランナー（仮想マシン）にダウンロード
+# ========================================
+      - name: Checkout code  # ステップの名前（任意）
+        uses: actions/checkout@v4  # 使用するアクション@バージョン
+      
+# ========================================
+# Step 2: actions/setup-node
+# Node.js環境をセットアップする公式アクション
+# 指定バージョンのNode.jsとnpmをインストール
+# ========================================
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:  # このアクションに渡すパラメータ
+          node-version: ${{ env.NODE_VERSION }}  # 環境変数を参照
+          cache: 'npm'  # npmキャッシュを有効化（高速化）
+          # 他のオプション例:
+          # registry-url: 'https://npm.pkg.github.com'
+          # scope: '@your-org'
+
+# ========================================
+# Step 3: run コマンド
+# uses の代わりに run を使用すると任意のコマンドを実行
+# シェルコマンド（Linux/macOSではbash）を実行
+# ========================================
+      - name: Install dependencies
+        run: npm ci
+
+
+  tests:
+    name: Tests (Non-blocking) # Github上の名前
+
+    # runs-on: 実行環境の指定
+    # ubuntu-latest: Ubuntu最新版（無料枠で最も一般的）
+    # 他の選択肢: windows-latest, macos-latest
+    runs-on: ubuntu-latest
+    continue-on-error: true # この設定によりテスト失敗でもCIは成功扱い
+    
+    steps:
+      - name: Checkout code # ステップの名前（任意）
+        uses: actions/checkout@v4 # 使用するアクション@バージョン
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm' # npmキャッシュを有効化（高速化）
+
+      - name: Install dependencies
+        run: npm ci # package-lock.jsonに基づく確実なインストール
+
+      # ========================================
+      # id: ステップに一意のIDを付与
+      # 他のステップからこのステップの結果を参照可能
+      # ${{ steps.ID名.outcome }} で結果を取得
+      # ========================================
+      - name: Run tests
+        id: test-run
+        run: npm run test
+        continue-on-error: true
+
+      - name: Test result summary
+        if: always()
+        run: |
+          if [ "${{ steps.test-run.outcome }}" == "success" ]; then
+            echo "✅ すべてのテストが成功しました！"
+          else
+            echo "⚠️  一部のテストが失敗しましたが、デプロイは可能です"
+            echo "現在のテスト状況を確認し、段階的に改善していきましょう"
+          fi
+
+      # PRの場合、テスト結果をコメントとして追加
+      - name: Comment test results on PR
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const testResult = '${{ steps.test-run.outcome }}';
+            const emoji = testResult === 'success' ? '✅' : '⚠️';
+            const message = testResult === 'success' 
+              ? 'すべてのテストが成功しました！' 
+              : 'テストに失敗がありますが、デプロイは可能です。段階的に改善していきましょう。';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ${emoji} テスト結果\n\n${message}\n\n詳細は[Actionsログ](${context.payload.pull_request.html_url}/checks)をご確認ください。`
+            });
+
+  # ========================================
+  # デプロイ準備完了の確認
+  # ========================================
+  deployment-ready:
+    name: Deployment Ready
+    runs-on: ubuntu-latest
+    if: always() && needs.essential-checks.result == 'success'
+    
+    steps:
+      - name: Deployment ready confirmation
+        run: |
+          echo "🚀 デプロイ準備が完了しました！"
+          echo ""
+          echo "✅ 必須チェック: 成功"
+          echo "ℹ️  テスト: 失敗があっても許容（段階的改善中）"
+          echo ""
+          echo "このブランチはマージ・デプロイ可能です。"
+
