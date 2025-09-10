@@ -134,14 +134,22 @@ export const createTestUser = async (overrides = {}) => {
 };
 
 export const createTestBook = async (overrides = {}) => {
-	return await prisma.book.create({
-		data: {
-			title: "テスト書籍",
-			authors: ["テスト著者"],
-			pageCount: 300,
-			...overrides,
-		},
-	});
+	const timestamp = Date.now();
+	const randomSuffix = Math.random().toString(36).substring(7);
+	
+	try {
+		return await prisma.book.create({
+			data: {
+				title: `テスト書籍_${timestamp}_${randomSuffix}`,
+				authors: ["テスト著者"],
+				pageCount: 300,
+				...overrides,
+			},
+		});
+	} catch (error) {
+		console.error('Failed to create test book:', error);
+		throw error;
+	}
 };
 
 export const createTestUserBook = async (overrides = {}) => {
@@ -153,9 +161,17 @@ export const createTestUserBook = async (overrides = {}) => {
 		book = await createTestBook();
 	}
 
+	// bookがnullまたはundefinedの場合のガード
+	if (!book || !book.id) {
+		throw new Error('Failed to create test book');
+	}
+
+	// デフォルトのユーザーIDを設定（オーバーライド可能）
+	const defaultUserId = overrides.userId || "test-user-id";
+
 	return await prisma.userBook.create({
 		data: {
-			userId: "test-user-id",
+			userId: defaultUserId,
 			bookId: book.id,
 			status: "want_to_read",
 			currentPage: 0,

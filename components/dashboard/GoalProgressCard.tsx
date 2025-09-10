@@ -32,14 +32,27 @@ const GoalProgressCardComponent = ({
     formattedTarget: formatStatValue(goal.targetValue, getGoalUnit(goal.type))
   }), [goal.type, goal.targetValue])
   
-  // メモ化した進捗情報
-  const progressInfo = useMemo(() => ({
-    color: getProgressColor(progress.progressPercentage, progress.isOnTrack),
-    textColor: getProgressTextColor(progress.progressPercentage, progress.isOnTrack),
-    formattedCurrent: formatStatValue(progress.currentValue, goalInfo.unit),
-    formattedRemaining: formatStatValue(progress.remainingToTarget, goalInfo.unit),
-    formattedDaily: progress.dailyTargetToFinish ? formatStatValue(progress.dailyTargetToFinish, goalInfo.unit) : null
-  }), [progress, goalInfo.unit])
+  // メモ化した進捗情報（デフォルト値で保護）
+  const progressInfo = useMemo(() => {
+    const safeProgress = progress || {
+      currentValue: 0,
+      progressPercentage: 0,
+      remainingToTarget: goal.targetValue,
+      isOnTrack: true,
+      isCompleted: false,
+      isExpired: false,
+      dailyTargetToFinish: undefined,
+      daysRemaining: undefined
+    }
+    
+    return {
+      color: getProgressColor(safeProgress.progressPercentage, safeProgress.isOnTrack),
+      textColor: getProgressTextColor(safeProgress.progressPercentage, safeProgress.isOnTrack),
+      formattedCurrent: formatStatValue(safeProgress.currentValue, goalInfo.unit),
+      formattedRemaining: formatStatValue(safeProgress.remainingToTarget, goalInfo.unit),
+      formattedDaily: safeProgress.dailyTargetToFinish ? formatStatValue(safeProgress.dailyTargetToFinish, goalInfo.unit) : null
+    }
+  }, [progress, goalInfo.unit, goal.targetValue])
 
   return (
     <Card className={`p-6 ${className}`}>
@@ -84,19 +97,19 @@ const GoalProgressCardComponent = ({
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">進捗</span>
             <span className={`font-medium ${progressInfo.textColor}`}>
-              {progress.progressPercentage}%
+              {progress?.progressPercentage ?? 0}%
             </span>
           </div>
           
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
               className={`h-2 rounded-full transition-all duration-300 ${progressInfo.color}`}
-              style={{ width: `${Math.min(progress.progressPercentage, 100)}%` }}
+              style={{ width: `${Math.min(progress?.progressPercentage ?? 0, 100)}%` }}
               role="progressbar"
-              aria-valuenow={progress.progressPercentage}
+              aria-valuenow={progress?.progressPercentage ?? 0}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label={`進捗率 ${progress.progressPercentage}%`}
+              aria-label={`進捗率 ${progress?.progressPercentage ?? 0}%`}
             />
           </div>
         </div>
@@ -120,15 +133,15 @@ const GoalProgressCardComponent = ({
         {/* ステータス表示 */}
         <div className="flex items-center justify-between pt-2 border-t">
           <div className="flex items-center space-x-2">
-            {progress.isCompleted ? (
+            {progress?.isCompleted ? (
               <span className="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
                 達成
               </span>
-            ) : progress.isExpired ? (
+            ) : progress?.isExpired ? (
               <span className="px-2 py-1 text-xs font-medium text-gray-800 bg-gray-100 rounded-full">
                 期限切れ
               </span>
-            ) : progress.isOnTrack ? (
+            ) : progress?.isOnTrack ?? true ? (
               <span className="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">
                 順調
               </span>
@@ -139,7 +152,7 @@ const GoalProgressCardComponent = ({
             )}
           </div>
 
-          {progress.daysRemaining !== undefined && progress.daysRemaining > 0 && (
+          {progress?.daysRemaining !== undefined && progress.daysRemaining > 0 && (
             <p className="text-xs text-gray-500">
               残り{progress.daysRemaining}日
             </p>
@@ -147,7 +160,7 @@ const GoalProgressCardComponent = ({
         </div>
 
         {/* 推奨ペース */}
-        {!progress.isCompleted && !progress.isExpired && progressInfo.formattedDaily && (
+        {!progress?.isCompleted && !progress?.isExpired && progressInfo.formattedDaily && (
           <div className="p-3 bg-gray-50 rounded-lg">
             <p className="text-xs text-gray-600">目標達成には</p>
             <p className="text-sm font-medium">
@@ -161,7 +174,7 @@ const GoalProgressCardComponent = ({
 }
 
 // ヘルパー関数をコンポーネント外で定義してパフォーマンス最適化
-function getGoalUnit(type: ReadingGoal['type']): 'books' | 'pages' | 'minutes' {
+function getGoalUnit(type: ReadingGoal['type']): 'books' | 'pages' | 'minutes' | 'sessions' {
   switch (type) {
     case 'books_per_year':
     case 'books_per_month':
@@ -170,7 +183,13 @@ function getGoalUnit(type: ReadingGoal['type']): 'books' | 'pages' | 'minutes' {
     case 'pages_per_year':
       return 'pages'
     case 'reading_time_per_day':
+    case 'minutes_per_week':
+    case 'minutes_per_month':
       return 'minutes'
+    case 'sessions_per_week':
+      return 'sessions'
+    case 'custom':
+      return 'books' // デフォルト
     default:
       return 'books'
   }
@@ -188,6 +207,14 @@ function getGoalDisplayName(type: ReadingGoal['type']): string {
       return '年間ページ目標'
     case 'reading_time_per_day':
       return '日間読書時間目標'
+    case 'minutes_per_week':
+      return '週間読書時間目標'
+    case 'minutes_per_month':
+      return '月間読書時間目標'
+    case 'sessions_per_week':
+      return '週間セッション目標'
+    case 'custom':
+      return 'カスタム読書目標'
     default:
       return '読書目標'
   }

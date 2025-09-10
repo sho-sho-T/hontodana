@@ -210,7 +210,7 @@ export async function generateReadingStats(
 		]);
 
 		// 有効なセッションデータをフィルタリング（最適化）
-		const validSessions = sessionsData.filter(isValidSession);
+		const validSessions = (sessionsData || []).filter(isValidSession);
 
 		// 基本統計計算（最適化 - reduce使用でより関数型的に）
 		const { totalReadingTime, totalPagesRead } = validSessions.reduce(
@@ -233,22 +233,27 @@ export async function generateReadingStats(
 		);
 
 		// 完読書籍統計（最適化）
-		const totalCompletedPages = completedBooks.reduce(
+		const safeCompletedBooks = completedBooks || [];
+		const totalCompletedPages = safeCompletedBooks.reduce(
 			(sum, book) => sum + (book.book.pageCount || 0),
 			0
 		);
 
 		const averageBookLength = safeCalculate(
 			totalCompletedPages,
-			completedBooks.length,
+			safeCompletedBooks.length,
 			0
 		);
 
 		// 日別統計生成
-		const dailyStats = generateDailyStats(validSessions, options.days || 7);
+		const dailyStats = validSessions.length > 0 
+			? generateDailyStats(validSessions, options.days || 7)
+			: [];
 
 		// 週別統計生成
-		const weeklyStats = generateWeeklyStats(validSessions, options.weeks || 4);
+		const weeklyStats = validSessions.length > 0 
+			? generateWeeklyStats(validSessions, options.weeks || 4)
+			: [];
 
 		// 読書ペース計算（最適化）
 		const last7DaysPages = dailyStats
@@ -274,10 +279,10 @@ export async function generateReadingStats(
 			totalPagesRead,
 			averagePagesPerSession,
 			averagePagesPerDay: readingPace.last7Days,
-			booksCompleted: completedBooks.length,
+			booksCompleted: safeCompletedBooks.length,
 			totalCompletedPages,
 			averageBookLength,
-			booksInProgress,
+			booksInProgress: booksInProgress || 0,
 			dailyStats,
 			weeklyStats,
 			readingPace,
