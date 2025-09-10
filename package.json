@@ -13,6 +13,7 @@
 		"check": "npx biome check .",
 		"check:fix": "npx biome check --write .",
 		"lint:next": "next lint",
+		"test:ci": "jest --ci --coverage --watchAll=false --passWithNoTests",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage",
