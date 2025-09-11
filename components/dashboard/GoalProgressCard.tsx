@@ -183,13 +183,7 @@ function getGoalUnit(type: ReadingGoal['type']): 'books' | 'pages' | 'minutes' |
     case 'pages_per_year':
       return 'pages'
     case 'reading_time_per_day':
-    case 'minutes_per_week':
-    case 'minutes_per_month':
       return 'minutes'
-    case 'sessions_per_week':
-      return 'sessions'
-    case 'custom':
-      return 'books' // デフォルト
     default:
       return 'books'
   }
@@ -207,14 +201,6 @@ function getGoalDisplayName(type: ReadingGoal['type']): string {
       return '年間ページ目標'
     case 'reading_time_per_day':
       return '日間読書時間目標'
-    case 'minutes_per_week':
-      return '週間読書時間目標'
-    case 'minutes_per_month':
-      return '月間読書時間目標'
-    case 'sessions_per_week':
-      return '週間セッション目標'
-    case 'custom':
-      return 'カスタム読書目標'
     default:
       return '読書目標'
   }
