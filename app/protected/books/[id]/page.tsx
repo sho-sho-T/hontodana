@@ -11,6 +11,7 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { StarRatingDisplay } from "@/components/rating/StarRating";
+import { BookRatingEditor } from "@/components/rating/BookRatingEditor";
 import type { UserBookWithBook } from "@/lib/models/book";
 import type { WishlistItemWithBook } from "@/lib/models/wishlist";
 import { getBookDetails, updateBookStatus } from "@/lib/server-actions/books";
@@ -338,6 +339,28 @@ export default function BookDetailPage() {
 							</div>
 						)}
 
+						{/* Rating and Review Editor */}
+						{userBook && (
+							<div className="mt-8 pt-6 border-t border-gray-200">
+								<BookRatingEditor
+									userBookId={userBook.id}
+									initialRating={userBook.rating as 1 | 2 | 3 | 4 | 5 | null}
+									initialReview={userBook.review}
+									bookTitle={book.title}
+									onUpdate={(newRating, newReview) => {
+										setBookData({
+											...bookData,
+											userBook: {
+												...userBook,
+												rating: newRating,
+												review: newReview,
+											},
+										});
+									}}
+								/>
+							</div>
+						)}
+
 						{/* Wishlist reason */}
 						{wishlistItem?.reason && (
 							<div className="mt-8 pt-6 border-t border-gray-200">
@@ -367,20 +390,6 @@ export default function BookDetailPage() {
 											<p className="text-gray-800">{note}</p>
 										</div>
 									))}
-								</div>
-							</div>
-						)}
-
-						{/* Review */}
-						{userBook?.review && (
-							<div className="mt-8 pt-6 border-t border-gray-200">
-								<h2 className="text-xl font-semibold text-gray-900 mb-4">
-									レビュー
-								</h2>
-								<div className="bg-blue-50 p-4 rounded-lg">
-									<p className="text-gray-800 leading-relaxed">
-										{userBook.review}
-									</p>
 								</div>
 							</div>
 						)}
