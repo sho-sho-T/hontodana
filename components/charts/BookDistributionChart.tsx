@@ -119,6 +119,58 @@ export const BookDistributionChart = React.memo<BookDistributionChartProps>(
 			return data.reduce((sum, item) => sum + item.value, 0);
 		}, [data]);
 
+		// ラベル生成コールバック
+		const generateLabelsCallback = useCallback(
+			(chart: any) => {
+				const data = chart.data;
+				if (data.labels.length && data.datasets.length) {
+					return data.labels.map((label: string, i: number) => {
+						const value = data.datasets[0].data[i];
+						const percentage =
+							total > 0 ? Math.round((value / total) * 100) : 0;
+						const displayLabel = showPercentage
+							? `${label} (${percentage}%)`
+							: label;
+
+						return {
+							text: displayLabel,
+							fillStyle: data.datasets[0].backgroundColor[i],
+							strokeStyle: data.datasets[0].borderColor[i],
+							lineWidth: data.datasets[0].borderWidth,
+							hidden: false,
+							index: i,
+						};
+					});
+				}
+				return [];
+			},
+			[total, showPercentage]
+		);
+
+		// ツールチップラベルコールバック
+		const tooltipLabelCallback = useCallback(
+			(context: any) => {
+				const value = context.parsed || context.raw;
+				const actualValue =
+					type === "doughnut" ? value : value.y || value;
+				const percentage =
+					total > 0 ? Math.round((actualValue / total) * 100) : 0;
+				return `${context.label}: ${actualValue}冊 (${percentage}%)`;
+			},
+			[type, total]
+		);
+
+		// クリックハンドラー
+		const onClickHandler = useCallback(
+			(event: any, elements: any[]) => {
+				if (elements.length > 0 && onSegmentClick && data) {
+					const index = elements[0].index;
+					onSegmentClick(data[index], index);
+				}
+			},
+			[onSegmentClick, data]
+		);
+
 		// チャートオプション
 		const options = useMemo(() => {
 			const baseOptions = {
@@ -134,32 +186,7 @@ export const BookDistributionChart = React.memo<BookDistributionChartProps>(
 							font: {
 								size: 12,
 							},
-							generateLabels: useCallback(
-								(chart: any) => {
-									const data = chart.data;
-									if (data.labels.length && data.datasets.length) {
-										return data.labels.map((label: string, i: number) => {
-											const value = data.datasets[0].data[i];
-											const percentage =
-												total > 0 ? Math.round((value / total) * 100) : 0;
-											const displayLabel = showPercentage
-												? `${label} (${percentage}%)`
-												: label;
-
-											return {
-												text: displayLabel,
-												fillStyle: data.datasets[0].backgroundColor[i],
-												strokeStyle: data.datasets[0].borderColor[i],
-												lineWidth: data.datasets[0].borderWidth,
-												hidden: false,
-												index: i,
-											};
-										});
-									}
-									return [];
-								},
-								[total, showPercentage]
-							),
+							generateLabels: generateLabelsCallback,
 						},
 					},
 					title: {
@@ -179,29 +206,11 @@ export const BookDistributionChart = React.memo<BookDistributionChartProps>(
 						cornerRadius: 8,
 						displayColors: true,
 						callbacks: {
-							label: useCallback(
-								(context: any) => {
-									const value = context.parsed || context.raw;
-									const actualValue =
-										type === "doughnut" ? value : value.y || value;
-									const percentage =
-										total > 0 ? Math.round((actualValue / total) * 100) : 0;
-									return `${context.label}: ${actualValue}冊 (${percentage}%)`;
-								},
-								[type, total]
-							),
+							label: tooltipLabelCallback,
 						},
 					},
 				},
-				onClick: useCallback(
-					(event: any, elements: any[]) => {
-						if (elements.length > 0 && onSegmentClick && data) {
-							const index = elements[0].index;
-							onSegmentClick(data[index], index);
-						}
-					},
-					[onSegmentClick, data]
-				),
+				onClick: onClickHandler,
 				animation: {
 					duration: 1000,
 					easing: "easeInOutQuart",
@@ -256,8 +265,10 @@ export const BookDistributionChart = React.memo<BookDistributionChartProps>(
 			showPercentage,
 			total,
 			dataHash,
-			onSegmentClick,
-		]); // dataHashを依存関係に変更
+			generateLabelsCallback,
+			tooltipLabelCallback,
+			onClickHandler,
+		]);
 
 		// アクセシビリティ対応（メモ化）
 		const updateAccessibility = useCallback(() => {
